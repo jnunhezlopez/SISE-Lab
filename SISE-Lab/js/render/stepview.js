@@ -6,16 +6,14 @@
 
 class StepView {
 
-    constructor(name, x, y) {
+    constructor(step, x, y) {
 
-        this.name = name;
+        this.step = step;
         this.x = x;
         this.y = y;
 
         this.width = 120;
         this.height = 60;
-
-        this._marked = false;
 
     }
 
@@ -56,28 +54,25 @@ class StepView {
 
         this.text.setAttribute("font-size", "22");
 
-        this.text.textContent = this.name;
+        this.text.textContent = this.step.name;
 
         this.group.appendChild(this.rect);
         this.group.appendChild(this.mark);
         this.group.appendChild(this.text);
         
-        this.marked = this._marked;
+        this.refresh();
 
         svg.appendChild(this.group);
 
     }
-    get marked() {
-        return this._marked;
-    }
-
-    set marked(value) {
-
-        this._marked = value;
+    refresh() {
 
         if (!this.mark) return;
 
-        this.mark.setAttribute("visibility", this._marked ? "visible" : "hidden");  
+        this.mark.setAttribute(
+            "visibility",
+            this.step.marked ? "visible" : "hidden"
+        );
 
     }
 }

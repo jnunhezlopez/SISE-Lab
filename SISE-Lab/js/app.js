@@ -1,8 +1,10 @@
+
+const svgCanvas=new SVGCanvas("canvas");
 const diagram = new Diagram();
 
 const s0 = diagram.addStep("S0", true);
 const s1 = diagram.addStep("S1");
-const s2 = diagram.addStep("S2", true);
+const s2 = diagram.addStep("S2");
 
 const t1 = diagram.addTransition("Marcha");
 const t2 = diagram.addTransition("Fin");
@@ -13,8 +15,44 @@ diagram.connect(t1, s1);
 diagram.connect(s1, t2);
 diagram.connect(t2, s2);
 
-console.log("Vector de marcado");
+const engine = new Engine(diagram);
+
+const renderer = new Renderer(svgCanvas, diagram, engine);
+
+renderer.render();
+renderer.transitionViews.forEach(view => {
+
+    view.onClick(() => {
+
+        console.log(`Disparo ${view.transition.name}`);
+
+        if (engine.fire(view.transition)) {
+
+            renderer.refresh();
+
+        }
+
+    });
+
+});
+/* console.log("Marcado inicial");
+
 console.table(diagram.markingVector());
+
+engine.fire(t1);
+
+renderer.refresh();
+
+console.log("Marcado final");
+
+console.table(diagram.markingVector()); */
+
+//const u = engine.buildFireVector(t1);
+//const next = engine.nextMarking(u);
+
+
+//console.log("Vector de marcado");
+//console.table(diagram.markingVector()); 
 /* const canvas=new SVGCanvas("canvas");
 
 const s0=new Step("S0", 100, 80);
