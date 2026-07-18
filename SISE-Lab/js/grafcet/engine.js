@@ -40,6 +40,31 @@ class Engine {
 
     }   
     /**
+     * Comprueba si un vector de marcado es consistente.
+     */
+    isConsistent(marking) {
+
+        return marking.every(value => value >= 0);
+
+    }
+    /**
+     * Evoluciona el GRAFCET a partir de un vector de disparo.
+     * Devuelve true si el marcado se ha aplicado.
+     */
+    evolve(fireVector) {
+
+        const marking = this.nextMarking(fireVector);
+        if (!this.isConsistent(marking)) {
+
+            return false;   
+        }
+
+        this.applyMarking(marking);
+
+        return true;
+
+    }    
+    /**
      * Indica si una transición está habilitada.
      */
     isEnabled(transition) {
@@ -64,11 +89,7 @@ class Engine {
 
         const fireVector = this.buildFireVector(transition);
 
-        const marking = this.nextMarking(fireVector);
-
-        this.applyMarking(marking);
-
-        return true;
+        return this.evolve(fireVector);
 
     }    
     /**

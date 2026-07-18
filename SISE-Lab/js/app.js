@@ -24,7 +24,7 @@ renderer.transitionViews.forEach(view => {
 
     view.onClick(() => {
 
-        console.log(`Disparo ${view.transition.name}`);
+        console.log(`Disparo ${view.transition.receptivity}`);
 
         if (engine.fire(view.transition)) {
 

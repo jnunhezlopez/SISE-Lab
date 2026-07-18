@@ -8,7 +8,7 @@ class Renderer {
         this.svg = svgCanvas;
         this.diagram = diagram;
         this.engine = engine;
-
+        
         // Vistas de las etapas
         this.stepViews = [];
         // Vistas de las transiciones
@@ -24,9 +24,20 @@ class Renderer {
         this.transitionViews = [];
 
         // Posición inicial
-        let x = 50;
-        let y = 80;
+        //let x = 50;
+        //let y = 80;
+        // Constantes de layout
+        const STEP_X = 50;
+        const STEP_Y = 80;
 
+        const STEP_SPACING = 140;
+
+        const TRANSITION_OFFSET_X = 60;
+        const TRANSITION_OFFSET_Y = 60;
+
+        // Posición inicial
+        let x = STEP_X;
+        let y = STEP_Y;
         // Dibujar todas las etapas
         this.diagram.steps.forEach(step => {
 
@@ -35,23 +46,29 @@ class Renderer {
 
             view.draw(this.svg.svg);
 
-            y += 140;
+            y += STEP_SPACING;
 
         });
-        const tx = 110;
-        let ty = 140;
+
 
         this.diagram.transitions.forEach(transition => {
 
-            const view = new TransitionView(transition, tx, ty);
+            const transitionX = STEP_X + TRANSITION_OFFSET_X;
+            const transitionY = STEP_Y
+                            + TRANSITION_OFFSET_Y
+                            + this.transitionViews.length * STEP_SPACING;
+
+            const view = new TransitionView(
+                transition,
+                transitionX,
+                transitionY
+            );
 
             this.transitionViews.push(view);
 
             view.draw(this.svg.svg);
 
             view.transition = transition;
-
-            ty += 140;
 
         });
         // Dibujar los enlaces entre etapas y transiciones
