@@ -26,9 +26,10 @@ class Renderer {
         this.svg.svg.replaceChildren();
         this.stepViews = [];
         this.transitionViews = [];
+//        this.layout.clearPositions();
         // Inicializar posiciones por defecto
-
-        this.diagram.steps.forEach((step, index) => {
+        this.layout.buildLinear(this.diagram);
+/*         this.diagram.steps.forEach((step, index) => {
 
             if (!this.layout.positionOf(step)) {
 
@@ -57,6 +58,7 @@ class Renderer {
                 );
             }
         });        
+ */        
         this.stepMap.clear();
         this.transitionMap.clear();
 

@@ -20,6 +20,10 @@ class Layout {
         this.positions.set(node, { x, y });
 
     }
+    clearPositions() {
+
+        this.positions.clear();
+    }
     positionOf(node) {
 
         return this.positions.get(node);
@@ -54,5 +58,25 @@ class Layout {
         };
 
     }
+    buildLinear(diagram) {
 
+        this.positions.clear();
+
+        diagram.steps.forEach((step, index) => {
+
+            const p = this.stepPosition(index);
+
+            this.setPosition(step, p.x, p.y);
+
+        });
+
+        diagram.transitions.forEach((transition, index) => {
+
+            const p = this.transitionPosition(index);
+
+            this.setPosition(transition, p.x, p.y);
+
+        });
+
+    }
 }
