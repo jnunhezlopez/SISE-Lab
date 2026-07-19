@@ -26,13 +26,45 @@ class Renderer {
         this.svg.svg.replaceChildren();
         this.stepViews = [];
         this.transitionViews = [];
+        // Inicializar posiciones por defecto
+
+        this.diagram.steps.forEach((step, index) => {
+
+            if (!this.layout.positionOf(step)) {
+
+                const position = this.layout.stepPosition(index);
+
+                this.layout.setPosition(
+                    step,
+                    position.x,
+                    position.y
+                );
+
+            }
+
+        });
+
+        this.diagram.transitions.forEach((transition, index) => {
+
+            if (!this.layout.positionOf(transition)) {
+
+                const position = this.layout.transitionPosition(index);
+
+                this.layout.setPosition(
+                    transition,
+                    position.x,
+                    position.y
+                );
+            }
+        });        
         this.stepMap.clear();
         this.transitionMap.clear();
 
         // Dibujar todas las etapas
         this.diagram.steps.forEach(step => {
 
-            const position = this.layout.stepPosition(this.stepViews.length);
+            //const position = this.layout.stepPosition(this.stepViews.length);
+            const position = this.layout.positionOf(step);
             const view = new StepView(step, position.x, position.y);
             this.stepViews.push(view);
             this.stepMap.set(step, view);
@@ -43,10 +75,10 @@ class Renderer {
         // Dibujar todas las transiciones
         this.diagram.transitions.forEach(transition => {
 
-            const position = this.layout.transitionPosition(
-                this.transitionViews.length
-            );
-
+            // const position = this.layout.transitionPosition(
+            //     this.transitionViews.length
+            // );
+            const position = this.layout.positionOf(transition);
             const view = new TransitionView(
                 transition,
                 position.x,

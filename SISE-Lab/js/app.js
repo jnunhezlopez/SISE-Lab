@@ -20,7 +20,7 @@ const engine = new Engine(diagram);
 const renderer = new Renderer(svgCanvas, diagram, engine);
 
 renderer.render();
-const simulation = new Simulation(engine, renderer);
+const simulation = new Simulation(diagram, engine, renderer);
 simulation.start();
 /* console.log("Marcado inicial");
 

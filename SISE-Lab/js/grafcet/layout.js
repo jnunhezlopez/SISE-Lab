@@ -4,7 +4,7 @@
 class Layout {
 
     constructor() {
-
+        this.positions = new Map();
         // Constantes del layout
         this.STEP_X = 50;
         this.STEP_Y = 80;
@@ -15,7 +15,16 @@ class Layout {
         this.TRANSITION_OFFSET_Y = 60;
 
     }
+    setPosition(node, x, y) {
 
+        this.positions.set(node, { x, y });
+
+    }
+    positionOf(node) {
+
+        return this.positions.get(node);
+
+    }    
     /**
      * Devuelve la posición de una etapa.
      */
