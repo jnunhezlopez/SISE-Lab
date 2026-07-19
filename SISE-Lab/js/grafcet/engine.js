@@ -23,7 +23,7 @@ class Engine {
 
         const C = this.diagram.incidenceMatrix();
         const M = this.diagram.markingVector();
-
+        // copia del vector de marcado sin modificarlo
         const next = [...M];
 
         for (let s = 0; s < this.diagram.steps.length; s++) {

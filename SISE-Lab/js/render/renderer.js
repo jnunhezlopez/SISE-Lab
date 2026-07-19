@@ -13,7 +13,9 @@ class Renderer {
         this.stepViews = [];
         // Vistas de las transiciones
         this.transitionViews = [];  
-
+        // Relación Modelo - Vista
+        this.stepMap = new Map();
+        this.transitionMap = new Map();
     }
 
     render() {
@@ -22,6 +24,8 @@ class Renderer {
         this.svg.svg.replaceChildren();
         this.stepViews = [];
         this.transitionViews = [];
+        this.stepMap.clear();
+        this.transitionMap.clear();
 
         // Posición inicial
         //let x = 50;
@@ -43,7 +47,7 @@ class Renderer {
 
             const view = new StepView(step, x, y);
             this.stepViews.push(view);
-
+            this.stepMap.set(step, view);
             view.draw(this.svg.svg);
 
             y += STEP_SPACING;
@@ -65,45 +69,65 @@ class Renderer {
             );
 
             this.transitionViews.push(view);
-
+            this.transitionMap.set(transition, view);
             view.draw(this.svg.svg);
 
             view.transition = transition;
 
         });
-        // Dibujar los enlaces entre etapas y transiciones
+        // Dibujar los enlaces a partir de los arcos del modelo
 
-        for (let i = 0; i < this.transitionViews.length; i++) {
-            
-            const step1 = this.stepViews[i];
-            const transition = this.transitionViews[i];
-            const step2 = this.stepViews[i + 1];
+        this.diagram.arcs.forEach(arc => {
 
-            // Etapa -> Transición
+            let sourceView;
+            let targetView;
 
-            this.drawLine(
+            if (arc.source instanceof Step) {
 
-                step1.x + step1.width / 2,
-                step1.y + step1.height,
+                sourceView = this.stepMap.get(arc.source);
 
-                transition.x,
-                transition.y
+            } else {
 
-            );
+                sourceView = this.transitionMap.get(arc.source);
 
-            // Transición -> Etapa
+            }
 
-            this.drawLine(
+            if (arc.target instanceof Step) {
 
-                transition.x,
-                transition.y + transition.height,
+                targetView = this.stepMap.get(arc.target);
 
-                step2.x + step2.width / 2,
-                step2.y
+            } else {
 
-            );
+                targetView = this.transitionMap.get(arc.target);
 
-        }
+            }
+            if (arc.source instanceof Step) {
+
+                this.drawLine(
+
+                    sourceView.x + sourceView.width / 2,
+                    sourceView.y + sourceView.height,
+
+                    targetView.x,
+                    targetView.y
+
+                );
+
+            } else {
+
+                this.drawLine(
+
+                    sourceView.x,
+                    sourceView.y + sourceView.height,
+
+                    targetView.x + targetView.width / 2,
+                    targetView.y
+
+                );
+
+            }
+        }); 
+      
         this.refresh();
     }
     /**

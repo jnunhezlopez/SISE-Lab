@@ -84,7 +84,24 @@ class TransitionView {
         );
 
     }
+    /**
+     * Muestra una animación breve de disparo.
+     */
+    flash() {
 
+        if (!this.bar) return;
+
+        this.bar.setAttribute("stroke", "#FF8800");
+
+    }
+    /**
+     * Finaliza la animación y recupera el color normal.
+     */
+    unflash() {
+
+        this.refresh();
+
+    }
     onClick(callback) {
 
         this.group.style.cursor = "pointer";

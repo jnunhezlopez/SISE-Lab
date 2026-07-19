@@ -20,21 +20,8 @@ const engine = new Engine(diagram);
 const renderer = new Renderer(svgCanvas, diagram, engine);
 
 renderer.render();
-renderer.transitionViews.forEach(view => {
-
-    view.onClick(() => {
-
-        console.log(`Disparo ${view.transition.receptivity}`);
-
-        if (engine.fire(view.transition)) {
-
-            renderer.refresh();
-
-        }
-
-    });
-
-});
+const simulation = new Simulation(engine, renderer);
+simulation.start();
 /* console.log("Marcado inicial");
 
 console.table(diagram.markingVector());
