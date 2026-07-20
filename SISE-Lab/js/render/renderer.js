@@ -26,39 +26,10 @@ class Renderer {
         this.svg.svg.replaceChildren();
         this.stepViews = [];
         this.transitionViews = [];
-//        this.layout.clearPositions();
+
         // Inicializar posiciones por defecto
-        this.layout.buildLinear(this.diagram);
-/*         this.diagram.steps.forEach((step, index) => {
-
-            if (!this.layout.positionOf(step)) {
-
-                const position = this.layout.stepPosition(index);
-
-                this.layout.setPosition(
-                    step,
-                    position.x,
-                    position.y
-                );
-
-            }
-
-        });
-
-        this.diagram.transitions.forEach((transition, index) => {
-
-            if (!this.layout.positionOf(transition)) {
-
-                const position = this.layout.transitionPosition(index);
-
-                this.layout.setPosition(
-                    transition,
-                    position.x,
-                    position.y
-                );
-            }
-        });        
- */        
+        this.layout.build(this.diagram);
+        
         this.stepMap.clear();
         this.transitionMap.clear();
 

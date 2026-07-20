@@ -60,6 +60,31 @@ class Diagram {
             .map(arc => arc.target);
 
     }
+    nextTransitions(step) {
+
+        return this.arcs
+            .filter(arc =>
+                arc.source === step &&
+                arc.target instanceof Transition
+            )
+            .map(arc => arc.target);
+
+    }   
+    previousTransitions(step) {
+
+        return this.arcs
+            .filter(arc =>
+                arc.target === step &&
+                arc.source instanceof Transition
+            )
+            .map(arc => arc.source);
+
+    }    
+    initialStep() {
+
+        return this.steps.find(step => step.initial);
+
+    }    
     incidenceMatrix() {
 
         // Crear una matriz llena de ceros
