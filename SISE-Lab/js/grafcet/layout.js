@@ -145,6 +145,7 @@ class Layout {
 
         this.root = new LayoutNode(initialStep);
 
+
         const transitions = diagram.nextTransitions(initialStep);
 
         if (transitions.length === 0) {
@@ -159,17 +160,62 @@ class Layout {
 
         const nextSteps = diagram.nextSteps(transitions[0]);
 
-        nextSteps.forEach(step => {
+/*         nextSteps.forEach(step => {
 
             transitionNode.addChild(
                 new LayoutNode(step)
             );
 
-        });
+        }); */
+        nextSteps.forEach(step => {
 
-        console.log(this.root);
+            const stepNode = new LayoutNode(step);
+
+            transitionNode.addChild(stepNode);
+
+            const transitions = diagram.nextTransitions(step);
+
+            if (transitions.length > 0) {
+
+                const transitionNode2 = new LayoutNode(transitions[0]);
+
+                stepNode.addChild(transitionNode2);
+
+                const followingSteps =
+                    diagram.nextSteps(transitions[0]);
+
+                followingSteps.forEach(nextStep => {
+
+                    transitionNode2.addChild(
+                        new LayoutNode(nextStep)
+                    );
+
+                });
+
+            }
+
+        });
+        //console.log(this.root);
 
     }
+    buildFromStep(stepNode, diagram) {
+
+        const transitions =
+            diagram.nextTransitions(stepNode.modelNode);
+
+        transitions.forEach(transition => {
+
+            const transitionNode =
+                new LayoutNode(transition);
+
+            stepNode.addChild(transitionNode);
+
+        });
+
+    }
+    buildFromTransition(transitionNode, diagram) {
+
+    }    
     buildLinear(diagram) {
 
         this.positions.clear();
