@@ -46,7 +46,11 @@ class Renderer {
             this.stepViews.push(view);
             this.stepMap.set(step, view);
             view.draw(this.svg.svg);
-            
+            view.onMove = () => {
+
+                this.refreshConnections();
+
+            };
         });
 
         // Dibujar todas las transiciones
@@ -65,7 +69,11 @@ class Renderer {
             this.transitionViews.push(view);
             this.transitionMap.set(transition, view);
             view.draw(this.svg.svg);
+            view.onMove = () => {
 
+                this.refreshConnections();
+
+            };
             view.transition = transition;
 
         });
@@ -133,6 +141,68 @@ class Renderer {
         // Refrescar las vistas para reflejar el estado actual del modelo
         this.refresh();
     }
+    refreshConnections() {
+
+        this.diagram.arcs.forEach((arc, index) => {
+
+            let sourceView;
+            let targetView;
+
+            if (arc.source instanceof Step) {
+
+                sourceView = this.stepMap.get(arc.source);
+
+            } else {
+
+                sourceView = this.transitionMap.get(arc.source);
+
+            }
+
+            if (arc.target instanceof Step) {
+
+                targetView = this.stepMap.get(arc.target);
+
+            } else {
+
+                targetView = this.transitionMap.get(arc.target);
+
+            }
+
+            let x1;
+            let y1;
+            let x2;
+            let y2;
+
+            if (arc.source instanceof Step) {
+
+                x1 = sourceView.x + sourceView.width / 2;
+                y1 = sourceView.y + sourceView.height;
+
+                x2 = targetView.x;
+                y2 = targetView.y;
+
+            } else {
+
+                x1 = sourceView.x;
+                y1 = sourceView.y + sourceView.height;
+
+                x2 = targetView.x + targetView.width / 2;
+                y2 = targetView.y;
+
+            }
+
+            this.connectionViews[index].update(
+
+                x1,
+                y1,
+                x2,
+                y2
+
+            );
+
+        });
+
+    }    
     /**
      * Actualiza todas las vistas a partir del modelo.
      */

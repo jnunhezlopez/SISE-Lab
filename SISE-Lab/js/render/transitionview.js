@@ -19,6 +19,8 @@ class TransitionView {
 
         this.dragging = false;
         this.hasMoved = false;
+        // Función de aviso cuando cambia de posición
+        this.onMove = null;        
     }
 
     draw(svg) {
@@ -96,7 +98,11 @@ class TransitionView {
 
             this.hasMoved = true;
             this.updateGraphics();
+            if (this.onMove) {
 
+                this.onMove();
+
+            }
         });
 
         window.addEventListener("mouseup", () => {
@@ -125,6 +131,11 @@ class TransitionView {
 
             this.updateGraphics();
 
+            if (this.onMove) {
+
+                this.onMove();
+
+            }
             this.bar.style.cursor = "grab";
             this.text.style.cursor = "grab";
 
