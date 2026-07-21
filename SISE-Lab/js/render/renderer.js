@@ -18,6 +18,7 @@ class Renderer {
         // Relación Modelo - Vista
         this.stepMap = new Map();
         this.transitionMap = new Map();
+        this.connectionViews = [];
     }
 
     render() {
@@ -26,7 +27,7 @@ class Renderer {
         this.svg.svg.replaceChildren();
         this.stepViews = [];
         this.transitionViews = [];
-
+        this.connectionViews = [];
         // Inicializar posiciones por defecto
         this.layout.build(this.diagram);
         const tree = this.layout.tree();
@@ -94,32 +95,41 @@ class Renderer {
                 targetView = this.transitionMap.get(arc.target);
 
             }
+
+            let x1;
+            let y1;
+            let x2;
+            let y2;
+
             if (arc.source instanceof Step) {
 
-                this.drawLine(
+                x1 = sourceView.x + sourceView.width / 2;
+                y1 = sourceView.y + sourceView.height;
 
-                    sourceView.x + sourceView.width / 2,
-                    sourceView.y + sourceView.height,
-
-                    targetView.x,
-                    targetView.y
-
-                );
+                x2 = targetView.x;
+                y2 = targetView.y;
 
             } else {
 
-                this.drawLine(
+                x1 = sourceView.x;
+                y1 = sourceView.y + sourceView.height;
 
-                    sourceView.x,
-                    sourceView.y + sourceView.height,
-
-                    targetView.x + targetView.width / 2,
-                    targetView.y
-
-                );
+                x2 = targetView.x + targetView.width / 2;
+                y2 = targetView.y;
 
             }
-        }); 
+
+            const connection = new ConnectionView(
+                this.svg.svg,
+                x1,
+                y1,
+                x2,
+                y2
+            );
+
+            this.connectionViews.push(connection);
+
+        });
         // Refrescar las vistas para reflejar el estado actual del modelo
         this.refresh();
     }

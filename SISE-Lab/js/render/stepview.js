@@ -19,7 +19,8 @@ class StepView {
         this.height = 60;
 
         this.dragging = false;
-
+        // Función de aviso cuando cambia de posición
+        this.onMove = null;
     }
 
     draw(svg) {
@@ -92,6 +93,12 @@ class StepView {
 
             this.updateGraphics();
 
+            if (this.onMove) {
+
+                this.onMove();
+
+            }
+
         });
 
         window.addEventListener("mouseup", () => {
@@ -121,7 +128,11 @@ class StepView {
             this.y = snappedCenterY - this.height / 2;
 
             this.updateGraphics();
+            if (this.onMove) {
 
+                this.onMove();
+
+            }
             this.rect.style.cursor = "grab";
             this.text.style.cursor = "grab";
 
