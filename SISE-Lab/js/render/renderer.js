@@ -30,9 +30,7 @@ class Renderer {
         this.connectionViews = [];
         // Inicializar posiciones por defecto
         this.layout.build(this.diagram);
-        const tree = this.layout.tree();
-        //console.log(tree);
-        this.drawLayoutTree(tree);
+
 
         this.stepMap.clear();
         this.transitionMap.clear();
@@ -218,92 +216,5 @@ class Renderer {
         });
 
     }
-    drawLine(x1, y1, x2, y2) {
-
-        const NS = "http://www.w3.org/2000/svg";
-
-        const line = document.createElementNS(NS, "line");
-
-        line.setAttribute("x1", x1);
-        line.setAttribute("y1", y1);
-
-        line.setAttribute("x2", x2);
-        line.setAttribute("y2", y2);
-
-        line.setAttribute("stroke", "#222");
-        line.setAttribute("stroke-width", "2");
-        // line.setAttribute("stroke", "red");
-        // line.setAttribute("stroke-width", "5");
-
-        this.svg.svg.appendChild(line);
-
-    }    
-    drawLayoutTree(node, x = 500, y = 40) {
-
-        if (!node) {
-
-            return;
-
-        }
-
-        const NS = "http://www.w3.org/2000/svg";
-
-        // Nodo
-        const circle = document.createElementNS(NS, "circle");
-
-        circle.setAttribute("cx", x);
-        circle.setAttribute("cy", y);
-        circle.setAttribute("r", "18");
-
-        circle.setAttribute("fill", "white");
-        circle.setAttribute("stroke", "#0080ff");
-        circle.setAttribute("stroke-width", "2");
-
-        this.svg.svg.appendChild(circle);
-
-        // Texto
-        const text = document.createElementNS(NS, "text");
-
-        text.setAttribute("x", x);
-        text.setAttribute("y", y + 5);
-
-        text.setAttribute("text-anchor", "middle");
-        text.setAttribute("font-size", "12");
-
-        //console.log(node.modelNode);
-
-        text.textContent =
-            node.modelNode.name ||
-            node.modelNode.receptivity;
-
-        this.svg.svg.appendChild(text);
-
-        const spacing = 120;
-
-        node.children.forEach((child, index) => {
-
-            const offset = (index - (node.children.length - 1) / 2) * spacing;
-
-            this.drawLine(
-
-                x,
-                y + 18,
-
-                x + offset,
-                y + 80 - 18
-
-            );
-
-            this.drawLayoutTree(
-
-                child,
-
-                x + offset,
-                y + 80
-
-            );
-
-        });
-
-    }    
+    
 }

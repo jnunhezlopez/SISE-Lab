@@ -9,17 +9,20 @@ const s3 = diagram.addStep("S3");
 
 const t1 = diagram.addTransition("Marcha");
 const t2 = diagram.addTransition("Fin");
-
+const t3 = diagram.addTransition("Paro");
 
 diagram.connect(s0, t1);
+diagram.connect(s0, t3);
 
 diagram.connect(t1, s1);
-diagram.connect(t1, s2);
+diagram.connect(t3, s2);
 
 diagram.connect(s1, t2);
-diagram.connect(s2, t2);
 
-diagram.connect(t2, s3);
+diagram.connect(t2, s0);
+
+
+//diagram.connect(t2, s3);
 
 
 const engine = new Engine(diagram);
