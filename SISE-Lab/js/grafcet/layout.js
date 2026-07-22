@@ -59,7 +59,7 @@ class Layout {
         this.STEP_Y = 80;
 
         this.COLUMN_SPACING = 180;
-        this.ROW_SPACING = 140;
+        this.ROW_SPACING = 80;
         //------------------------------------------------------
         // Rejilla de edición
         //------------------------------------------------------

@@ -1,39 +1,159 @@
 
 const svgCanvas=new SVGCanvas("canvas");
-const diagram = new Diagram();
+let diagram = new Diagram();
 
 const s0 = diagram.addStep("S0", true);
 const s1 = diagram.addStep("S1");
 const s2 = diagram.addStep("S2");
-
+const s3 = diagram.addStep("S3");
+const s4 = diagram.addStep("S4");
+const s5 = diagram.addStep("S5");
 
 const t1 = diagram.addTransition("Marcha");
-const t2 = diagram.addTransition("Fin");
-const t3 = diagram.addTransition("Paro");
-const t4 = diagram.addTransition("Rearme");
+const t2 = diagram.addTransition("Rama1");
+const t3 = diagram.addTransition("Rama2");
+const t4 = diagram.addTransition("Convergencia");
+const t5 = diagram.addTransition("Fin");
 
 diagram.connect(s0, t1);
-diagram.connect(s0, t3);
+diagram.connect(s1, t2);
+diagram.connect(s2, t3);
+diagram.connect(s3, t4);
+diagram.connect(s4, t4);
+diagram.connect(s5, t5);
+
 
 diagram.connect(t1, s1);
-diagram.connect(t3, s2);
-
-diagram.connect(s1, t2);
-
-diagram.connect(t2, s0);
-diagram.connect(s2, t4);
-diagram.connect(t4, s0);
-
-//diagram.connect(t2, s3);
+diagram.connect(t1, s2);
+diagram.connect(t2, s3);
+diagram.connect(t3, s4);
+diagram.connect(t4, s5);
+diagram.connect(t5, s0);
 
 
-const engine = new Engine(diagram);
+let engine = new Engine(diagram);
 
-const renderer = new Renderer(svgCanvas, diagram, engine);
+let renderer = new Renderer(svgCanvas, diagram, engine);
 
 renderer.render();
-const simulation = new Simulation(diagram, engine, renderer);
+let  simulation = new Simulation(diagram, engine, renderer);
 simulation.start();
+
+//----------------------------------------------------------
+// Guardar
+//----------------------------------------------------------
+
+window.saveGrafcet = function () {
+
+    FileManager.save(
+
+        diagram,
+
+        renderer
+
+    );
+
+};
+
+//----------------------------------------------------------
+// Abrir
+//----------------------------------------------------------
+
+window.loadGrafcet = function () {
+
+    FileManager.load(result => {
+
+        //--------------------------------------------------
+        // Reconstruir modelo
+        //--------------------------------------------------
+
+        diagram = result.diagram;
+
+        //--------------------------------------------------
+        // Nuevo motor
+        //--------------------------------------------------
+
+        engine = new Engine(diagram);
+
+        //--------------------------------------------------
+        // Nuevo renderer
+        //--------------------------------------------------
+
+        renderer = new Renderer(
+
+            svgCanvas,
+
+            diagram,
+
+            engine
+
+        );
+
+        renderer.render();
+
+        //--------------------------------------------------
+        // Restaurar posiciones
+        //--------------------------------------------------
+
+        renderer.stepViews.forEach(view => {
+
+            const p = result.positions[view.step.name];
+
+            if (p) {
+
+                view.x = p.x;
+                view.y = p.y;
+                view.updateGraphics();
+
+            }
+
+        });
+
+        renderer.transitionViews.forEach(view => {
+
+            const p =
+                result.positions[
+                    view.transition.receptivity
+                ];
+
+            if (p) {
+
+                view.x = p.x;
+                view.y = p.y;
+                view.updateGraphics();
+
+            }
+
+        });
+
+        renderer.refreshConnections();
+
+        //--------------------------------------------------
+        // Reiniciar simulación
+        //--------------------------------------------------
+
+        simulation = new Simulation(
+
+            diagram,
+
+            engine,
+
+            renderer
+
+        );
+
+        simulation.start();
+
+    });
+
+};
+document
+    .getElementById("btnSave")
+    .addEventListener("click", saveGrafcet);
+
+document
+    .getElementById("btnLoad")
+    .addEventListener("click", loadGrafcet);
 /* console.log("Marcado inicial");
 
 console.table(diagram.markingVector());

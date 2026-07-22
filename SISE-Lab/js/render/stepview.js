@@ -6,7 +6,7 @@
 
 class StepView {
 
-    static GRID_SIZE = 70;
+    static GRID_SIZE = 20;
 
     constructor(step, x, y) {
 
@@ -15,8 +15,8 @@ class StepView {
         this.x = x;
         this.y = y;
 
-        this.width = 120;
-        this.height = 60;
+        this.width = 45;
+        this.height = 45;
 
         this.dragging = false;
         // Función de aviso cuando cambia de posición
@@ -174,11 +174,11 @@ class StepView {
     }
 
     updateGraphics() {
-        console.log(
+/*         console.log(
             this.step.name,
             this.x,
             this.y
-        );
+        ); */
         this.rect.setAttribute("x", this.x);
         this.rect.setAttribute("y", this.y);
 

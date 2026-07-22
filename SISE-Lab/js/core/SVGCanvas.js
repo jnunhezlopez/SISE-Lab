@@ -6,7 +6,7 @@
 
 class SVGCanvas {
 
-    constructor(containerId, width = 800, height = 600) {
+    constructor(containerId, width = 800, height = 800) {
 
         this.svg = document.createElementNS(
             "http://www.w3.org/2000/svg",
