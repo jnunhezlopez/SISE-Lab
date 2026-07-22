@@ -5,7 +5,7 @@ const diagram = new Diagram();
 const s0 = diagram.addStep("S0", true);
 const s1 = diagram.addStep("S1");
 const s2 = diagram.addStep("S2");
-const s3 = diagram.addStep("S3");
+
 
 const t1 = diagram.addTransition("Marcha");
 const t2 = diagram.addTransition("Fin");

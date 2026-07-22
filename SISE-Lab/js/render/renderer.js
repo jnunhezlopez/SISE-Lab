@@ -34,21 +34,48 @@ class Renderer {
 
         this.stepMap.clear();
         this.transitionMap.clear();
-
+        //console.log(this.diagram.steps.length);
         // Dibujar todas las etapas
         this.diagram.steps.forEach(step => {
-
+            //console.log(step.name);
             //const position = this.layout.stepPosition(this.stepViews.length);
             const position = this.layout.positionOf(step);
             const view = new StepView(step, position.x, position.y);
             this.stepViews.push(view);
+            //console.log(this.stepViews.length);
             this.stepMap.set(step, view);
             view.draw(this.svg.svg);
-            view.onMove = () => {
+            //------------------------------------------------------
+            // La etapa ha cambiado de posición
+            //------------------------------------------------------
+
+            view.onMove = (stepView) => {
+
+                //--------------------------------------------------
+                // Actualizar Layout
+                //--------------------------------------------------
+
+                this.layout.updatePosition(
+
+                    stepView.step,
+
+                    stepView.x,
+                    stepView.y
+
+                );
+
+                //--------------------------------------------------
+                // Redibujar conexiones
+                //--------------------------------------------------
 
                 this.refreshConnections();
 
-            };
+            };            
+/*             view.onMove = () => {
+
+                this.refreshConnections();
+
+            }; */
         });
 
         // Dibujar todas las transiciones
@@ -126,14 +153,19 @@ class Renderer {
             }
 
             const connection = new ConnectionView(
+
                 this.svg.svg,
-                x1,
-                y1,
-                x2,
-                y2
+
+                sourceView,
+                targetView,
+
+                arc.source,
+                arc.target
+
             );
 
             this.connectionViews.push(connection);
+
 
         });
         // Refrescar las vistas para reflejar el estado actual del modelo

@@ -52,9 +52,9 @@ class Simulation {
     }
     fireTransition(transition) {
 
-        console.log(
+/*         console.log(
             `Disparo ${transition.receptivity}`
-        );
+        ); */
 
         if (this.engine.fire(transition)) {
 

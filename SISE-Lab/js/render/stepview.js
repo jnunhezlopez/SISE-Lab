@@ -21,6 +21,10 @@ class StepView {
         this.dragging = false;
         // Función de aviso cuando cambia de posición
         this.onMove = null;
+        this.hasMoved = false;
+        this.startMouseX = 0;
+        this.startMouseY = 0;
+        
     }
 
     draw(svg) {
@@ -71,6 +75,9 @@ class StepView {
         this.group.addEventListener("mousedown", event => {
 
             this.dragging = true;
+            this.hasMoved = false;
+            this.startMouseX = event.offsetX;
+            this.startMouseY = event.offsetY;
 
             this.offsetX = event.offsetX - this.x;
             this.offsetY = event.offsetY - this.y;
@@ -91,11 +98,30 @@ class StepView {
             this.x = event.offsetX - this.offsetX;
             this.y = event.offsetY - this.offsetY;
 
+            const dx = event.offsetX - this.startMouseX;
+            const dy = event.offsetY - this.startMouseY;
+
+            if (
+
+                Math.abs(dx) > 3 ||
+
+                Math.abs(dy) > 3
+
+            ) {
+
+                this.hasMoved = true;
+
+            }
+            if (!this.hasMoved) {
+
+                return;
+
+            }
             this.updateGraphics();
 
             if (this.onMove) {
 
-                this.onMove();
+                this.onMove(this);
 
             }
 
@@ -110,7 +136,14 @@ class StepView {
             }
 
             this.dragging = false;
+            if (!this.hasMoved) {
 
+                this.rect.style.cursor = "grab";
+                this.text.style.cursor = "grab";
+
+                return;
+
+            }
             // Ajustar el CENTRO de la etapa a la cuadrícula
 
             const centerX = this.x + this.width / 2;
@@ -130,7 +163,7 @@ class StepView {
             this.updateGraphics();
             if (this.onMove) {
 
-                this.onMove();
+                this.onMove(this);
 
             }
             this.rect.style.cursor = "grab";
@@ -141,7 +174,11 @@ class StepView {
     }
 
     updateGraphics() {
-
+        console.log(
+            this.step.name,
+            this.x,
+            this.y
+        );
         this.rect.setAttribute("x", this.x);
         this.rect.setAttribute("y", this.y);
 

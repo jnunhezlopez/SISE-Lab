@@ -21,6 +21,9 @@ class TransitionView {
         this.hasMoved = false;
         // Función de aviso cuando cambia de posición
         this.onMove = null;        
+        
+        this.startMouseX = 0;
+        this.startMouseY = 0;
     }
 
     draw(svg) {
@@ -77,6 +80,8 @@ class TransitionView {
 
             this.dragging = true;
             this.hasMoved = false;
+            this.startMouseX = event.offsetX;
+            this.startMouseY = event.offsetY;
             this.offsetX = event.offsetX - this.x;
             this.offsetY = event.offsetY - this.y;
 
@@ -96,7 +101,25 @@ class TransitionView {
             this.x = event.offsetX - this.offsetX;
             this.y = event.offsetY - this.offsetY;
 
-            this.hasMoved = true;
+            const dx = event.offsetX - this.startMouseX;
+            const dy = event.offsetY - this.startMouseY;
+
+            if (
+
+                Math.abs(dx) > 3 ||
+
+                Math.abs(dy) > 3
+
+            ) {
+
+                this.hasMoved = true;
+
+            }
+            if (!this.hasMoved) {
+
+                return;
+
+            }
             this.updateGraphics();
             if (this.onMove) {
 
@@ -114,6 +137,15 @@ class TransitionView {
             }
 
             this.dragging = false;
+
+            if (!this.hasMoved) {
+
+                this.bar.style.cursor = "grab";
+                this.text.style.cursor = "grab";
+
+                return;
+
+            }
 
             const centerX = this.x;
             const centerY = this.y + this.height / 2;

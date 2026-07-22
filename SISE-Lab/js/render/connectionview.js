@@ -1,62 +1,125 @@
 /**
  * ConnectionView
  * --------------
- * Representa gráficamente un arco del GRAFCET.
+ * Dibuja un conector ortogonal entre una etapa y una transición.
  */
 
 class ConnectionView {
 
-    constructor(svg, x1, y1, x2, y2) {
+    constructor(svg, sourceView, targetView, sourceModel, targetModel) {
 
         this.svg = svg;
 
+        this.sourceView = sourceView;
+        this.targetView = targetView;
+
+        this.sourceModel = sourceModel;
+        this.targetModel = targetModel;
+
         const NS = "http://www.w3.org/2000/svg";
 
-        this.line1 = document.createElementNS(NS, "line");
-        this.line2 = document.createElementNS(NS, "line");
-        this.line3 = document.createElementNS(NS, "line");
+        this.path = document.createElementNS(NS, "path");
 
-        [this.line1, this.line2, this.line3].forEach(line => {
+        this.path.setAttribute("fill", "none");
+        this.path.setAttribute("stroke", "#222");
+        this.path.setAttribute("stroke-width", "2");
+        this.path.setAttribute("stroke-linejoin", "round");
 
-            line.setAttribute("stroke", "#222");
-            line.setAttribute("stroke-width", "2");
+        this.svg.appendChild(this.path);
 
-            this.svg.appendChild(line);
-
-        });
-
-        this.update(x1, y1, x2, y2);
+        this.update();
 
     }
 
-    update(x1, y1, x2, y2) {
+    //----------------------------------------------------------
+    // Redibuja el conector
+    //----------------------------------------------------------
 
-        // Punto donde gira el conector
-        const ym = (y1 + y2) / 2;
+    update() {
 
-        // Tramo vertical superior
+        const start = this.startPoint();
+        const end = this.endPoint();
 
-        this.line1.setAttribute("x1", x1);
-        this.line1.setAttribute("y1", y1);
+        const ym = (start.y + end.y) / 2;
 
-        this.line1.setAttribute("x2", x1);
-        this.line1.setAttribute("y2", ym);
+        const d = [
 
-        // Tramo horizontal
+            `M ${start.x} ${start.y}`,
 
-        this.line2.setAttribute("x1", x1);
-        this.line2.setAttribute("y1", ym);
+            `L ${start.x} ${ym}`,
 
-        this.line2.setAttribute("x2", x2);
-        this.line2.setAttribute("y2", ym);
+            `L ${end.x} ${ym}`,
 
-        // Tramo vertical inferior
+            `L ${end.x} ${end.y}`
 
-        this.line3.setAttribute("x1", x2);
-        this.line3.setAttribute("y1", ym);
+        ].join(" ");
 
-        this.line3.setAttribute("x2", x2);
-        this.line3.setAttribute("y2", y2);
+        this.path.setAttribute("d", d);
+
+    }
+
+    //----------------------------------------------------------
+    // Punto inicial
+    //----------------------------------------------------------
+
+    startPoint() {
+
+        if (this.sourceModel instanceof Step) {
+
+            return {
+
+                x:
+                    this.sourceView.x +
+                    this.sourceView.width / 2,
+
+                y:
+                    this.sourceView.y +
+                    this.sourceView.height
+
+            };
+
+        }
+
+        return {
+
+            x: this.sourceView.x,
+
+            y:
+                this.sourceView.y +
+                this.sourceView.height
+
+        };
+
+    }
+
+    //----------------------------------------------------------
+    // Punto final
+    //----------------------------------------------------------
+
+    endPoint() {
+
+        if (this.targetModel instanceof Step) {
+
+            return {
+
+                x:
+                    this.targetView.x +
+                    this.targetView.width / 2,
+
+                y:
+                    this.targetView.y
+
+            };
+
+        }
+
+        return {
+
+            x: this.targetView.x,
+
+            y: this.targetView.y
+
+        };
 
     }
 
