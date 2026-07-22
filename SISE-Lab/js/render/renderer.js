@@ -152,7 +152,7 @@ class Renderer {
 
             }
 
-            const connection = new ConnectionView(
+/*             const connection = new ConnectionView(
 
                 this.svg.svg,
 
@@ -164,8 +164,54 @@ class Renderer {
 
             );
 
-            this.connectionViews.push(connection);
+            this.connectionViews.push(connection); */
+            let connection;
 
+            //------------------------------------------------------
+            // ¿Es un salto?
+            //------------------------------------------------------
+
+            const isJump =
+
+                targetView.y < sourceView.y ||
+
+                Math.abs(targetView.y - sourceView.y) > 280;
+
+            //------------------------------------------------------
+            // Crear la vista adecuada
+            //------------------------------------------------------
+
+            if (isJump && arc.target instanceof Step) {
+
+                connection = new JumpConnectionView(
+
+                    this.svg.svg,
+
+                    sourceView,
+                    targetView,
+
+                    arc.target
+
+                );
+
+            }
+            else {
+
+                connection = new ConnectionView(
+
+                    this.svg.svg,
+
+                    sourceView,
+                    targetView,
+
+                    arc.source,
+                    arc.target
+
+                );
+
+            }
+
+            this.connectionViews.push(connection);
 
         });
         // Refrescar las vistas para reflejar el estado actual del modelo
