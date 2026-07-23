@@ -28,6 +28,9 @@ class TransitionView {
         
         this.startMouseX = 0;
         this.startMouseY = 0;
+
+        //this.onClick = null;
+        this.onSelect = null;
     }
 
     draw(svg) {
@@ -73,7 +76,17 @@ class TransitionView {
         this.installDrag(svg);
 
         this.refresh();
+        this.group.addEventListener("click", event => {
 
+            event.stopPropagation();
+
+            if (this.onSelect) {
+
+                this.onSelect(this);
+
+            }
+
+        });
         svg.appendChild(this.group);
 
     }

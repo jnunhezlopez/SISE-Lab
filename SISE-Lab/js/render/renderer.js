@@ -19,6 +19,75 @@ class Renderer {
         this.stepMap = new Map();
         this.transitionMap = new Map();
         this.connectionViews = [];
+        this.mode = "select";
+
+        this.selectedNode = null;
+
+        document
+            .getElementById("btnStep")
+            .addEventListener("click", () => {
+
+                this.mode = "step";
+
+             });
+        document
+            .getElementById("btnTransition")
+            .addEventListener("click", () => {
+
+                this.mode = "transition";
+
+            });   
+        document
+            .getElementById("btnConnect")
+            .addEventListener("click", () => {
+
+                this.mode = "connect";
+                this.selectedNode = null;
+
+            });               
+        this.svg.svg.addEventListener("click", event => {
+
+            if (this.mode === "step") {
+
+                const step = this.diagram.addStep(
+                    "S" + this.diagram.steps.length
+                );
+
+                this.layout.updatePosition(
+                    step,
+                    event.offsetX,
+                    event.offsetY
+                );
+
+                this.mode = "select";
+
+                this.render();
+
+                return;
+
+            }
+
+            if (this.mode === "transition") {
+
+                const transition = this.diagram.addTransition(
+                    "T" + this.diagram.transitions.length
+                );
+
+                this.layout.updatePosition(
+                    transition,
+                    event.offsetX,
+                    event.offsetY
+                );
+
+                this.mode = "select";
+
+                this.render();
+
+                return;
+
+            }
+
+        });              
     }
 
     render() {
@@ -37,14 +106,54 @@ class Renderer {
         //console.log(this.diagram.steps.length);
         // Dibujar todas las etapas
         this.diagram.steps.forEach(step => {
-            console.log(step.name);
+            //console.log(step.name);
             //const position = this.layout.stepPosition(this.stepViews.length);
             const position = this.layout.positionOf(step);
-            console.log(position);
+            //console.log(position);
             const view = new StepView(step, position.x, position.y);
             this.stepViews.push(view);
             //console.log(this.stepViews.length);
             this.stepMap.set(step, view);
+            view.onSelect = stepView => {
+
+                this.nodeClicked(stepView.step);
+
+            };           
+            view.onDoubleClick = stepView => {
+
+                const name = prompt(
+
+                    "Nombre de la etapa:",
+
+                    stepView.step.name
+
+                );
+
+                if (name !== null) {
+
+                    stepView.step.name = name;
+
+                }
+
+                const action = prompt(
+
+                    "Acción:",
+
+                    stepView.step.action ?? ""
+
+                );
+
+                if (action !== null) {
+
+                    stepView.step.action = action;
+
+                }
+
+                //this.render();
+                stepView.refreshText();
+                this.refreshConnections();
+
+            };           
             view.draw(this.svg.svg);
             //------------------------------------------------------
             // La etapa ha cambiado de posición
@@ -94,9 +203,21 @@ class Renderer {
 
             this.transitionViews.push(view);
             this.transitionMap.set(transition, view);
+            view.onSelect = transitionView => {
+
+                this.nodeClicked(transitionView.transition);
+
+            };            
             view.draw(this.svg.svg);
             view.onMove = () => {
+                this.layout.updatePosition(
 
+                    transition,
+
+                    view.x,
+                    view.y
+
+                );
                 this.refreshConnections();
 
             };
@@ -217,6 +338,11 @@ class Renderer {
         });
         // Refrescar las vistas para reflejar el estado actual del modelo
         this.refresh();
+        if (this.simulation) {
+
+            this.simulation.start();
+
+        }
     }
     refreshConnections() {
 
@@ -295,5 +421,35 @@ class Renderer {
         });
 
     }
-    
+   nodeClicked(node) {
+
+        if (this.mode !== "connect") {
+
+            return;
+
+        }
+
+        if (this.selectedNode === null) {
+
+            this.selectedNode = node;
+
+            return;
+
+        }
+
+        this.diagram.connect(
+
+            this.selectedNode,
+
+            node
+
+        );
+
+        this.selectedNode = null;
+
+        this.mode = "select";
+
+        this.render();
+
+    } 
 }

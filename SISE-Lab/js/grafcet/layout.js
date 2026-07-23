@@ -74,9 +74,14 @@ class Layout {
     // Limpia todas las estructuras internas
     //----------------------------------------------------------
 
-    reset() {
+    reset(clearPositions = false) {
 
-        this.positions.clear();
+        if (clearPositions) {
+
+            this.positions.clear();
+
+        }
+
         this.levels.clear();
         this.columns.clear();
         this.visited.clear();
@@ -214,19 +219,18 @@ class Layout {
         //--------------------------------------------------
 
         diagram.steps.forEach(step => {
-/*             console.log(
-                step.name,
-                this.levelOf(step),
-                this.columnOf(step)
-            ); */
-            const p = this.gridPosition(
+            if (!this.positions.has(step)) {
 
-                this.columnOf(step),
-                this.levelOf(step)
+                const p = this.gridPosition(
 
-            );
+                    this.columnOf(step),
+                    this.levelOf(step)
 
-            this.setPosition(step, p.x, p.y);
+                );
+
+                this.setPosition(step, p.x, p.y);
+
+            }
 
         });
 
@@ -236,16 +240,20 @@ class Layout {
 
         diagram.transitions.forEach(transition => {
 
-            const p = this.gridPosition(
+            if (!this.positions.has(transition)) {
 
-                this.columnOf(transition),
-                this.levelOf(transition),
+                const p = this.gridPosition(
 
-                this.TRANSITION_OFFSET_X
+                    this.columnOf(transition),
+                    this.levelOf(transition),
 
-            );
+                    this.TRANSITION_OFFSET_X
 
-            this.setPosition(transition, p.x, p.y);
+                );
+
+                this.setPosition(transition, p.x, p.y);
+
+            }
 
         });
 

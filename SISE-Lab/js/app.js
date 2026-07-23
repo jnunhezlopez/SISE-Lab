@@ -38,6 +38,7 @@ let renderer = new Renderer(svgCanvas, diagram, engine);
 
 renderer.render();
 let  simulation = new Simulation(diagram, engine, renderer);
+renderer.simulation = simulation;
 simulation.start();
 
 //----------------------------------------------------------

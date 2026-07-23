@@ -24,6 +24,9 @@ class StepView {
         this.hasMoved = false;
         this.startMouseX = 0;
         this.startMouseY = 0;
+
+        this.onSelect = null;
+        this.onDoubleClick = null;
         
     }
 
@@ -82,7 +85,28 @@ class StepView {
         this.installDrag(svg);
 
         this.refresh();
+        this.group.addEventListener("click", event => {
 
+            event.stopPropagation();
+
+            if (this.onSelect) {
+
+                this.onSelect(this);
+
+            }
+
+        });
+        this.group.addEventListener("dblclick", event => {
+
+            event.stopPropagation();
+
+            if (this.onDoubleClick) {
+
+                this.onDoubleClick(this);
+
+            }
+
+        });        
         svg.appendChild(this.group);
 
     }
@@ -270,7 +294,27 @@ class StepView {
             this.step.marked ? "visible" : "hidden"
 
         );
+        this.actionRect.setAttribute(
+
+            "stroke",
+
+            this.step.marked ? "#00AA00" : "#222"
+
+        );
+
+        this.actionRect.setAttribute(
+
+            "stroke-width",
+
+            this.step.marked ? "3" : "2"
+
+        );
+    }
+    refreshText() {
+
+        this.text.textContent = this.step.name;
+
+        this.updateGraphics();
 
     }
-
 }
