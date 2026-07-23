@@ -3,7 +3,7 @@
  */
 class TransitionView {
 
-    static GRID_SIZE = 70;
+    static GRID_SIZE = 20;
 
     constructor(transition, x, y) {
 
@@ -12,8 +12,12 @@ class TransitionView {
         this.x = x;
         this.y = y;
 
+        this.lineHeight = 12;
+        this.barWidth = 18;
+        this.barGap = 6;
+
         this.width = 36;
-        this.height = 60;
+        this.height = 2 * this.lineHeight + 2 * this.barGap; //60
 
         this.enabled = false;
 
@@ -51,7 +55,7 @@ class TransitionView {
 
         this.text = document.createElementNS(NS, "text");
 
-        this.text.setAttribute("text-anchor", "middle");
+        this.text.setAttribute("text-anchor", "start");
         this.text.setAttribute("font-family", "Segoe UI");
         this.text.setAttribute("font-size", "14");
 
@@ -181,22 +185,22 @@ class TransitionView {
         this.topLine.setAttribute("y1", this.y);
 
         this.topLine.setAttribute("x2", this.x);
-        this.topLine.setAttribute("y2", this.y + 24);
+        this.topLine.setAttribute("y2", this.y + this.lineHeight);
 
-        this.bar.setAttribute("x1", this.x - 18);
-        this.bar.setAttribute("y1", this.y + 30);
+        this.bar.setAttribute("x1", this.x - this.barWidth);
+        this.bar.setAttribute("y1", this.y + this.lineHeight + this.barGap);
 
-        this.bar.setAttribute("x2", this.x + 18);
-        this.bar.setAttribute("y2", this.y + 30);
+        this.bar.setAttribute("x2", this.x + this.barWidth);
+        this.bar.setAttribute("y2", this.y + this.lineHeight + this.barGap);
 
         this.bottomLine.setAttribute("x1", this.x);
-        this.bottomLine.setAttribute("y1", this.y + 36);
+        this.bottomLine.setAttribute("y1", this.y + this.lineHeight + 2 * this.barGap);
 
         this.bottomLine.setAttribute("x2", this.x);
-        this.bottomLine.setAttribute("y2", this.y + 60);
+        this.bottomLine.setAttribute("y2", this.y + 2 * this.lineHeight + 2 * this.barGap);
 
-        this.text.setAttribute("x", this.x);
-        this.text.setAttribute("y", this.y + 15);
+        this.text.setAttribute("x", this.x + 20);
+        this.text.setAttribute("y", this.y + 20);
 
     }
 

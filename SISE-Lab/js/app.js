@@ -4,6 +4,7 @@ let diagram = new Diagram();
 
 const s0 = diagram.addStep("S0", true);
 const s1 = diagram.addStep("S1");
+s1.setAction("Motor ON");
 const s2 = diagram.addStep("S2");
 const s3 = diagram.addStep("S3");
 const s4 = diagram.addStep("S4");

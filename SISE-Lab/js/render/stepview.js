@@ -56,9 +56,26 @@ class StepView {
         this.text.textContent = this.step.name;
         this.text.style.cursor = "grab";
 
+        this.actionLine = document.createElementNS(NS, "line");
+        this.actionLine.setAttribute("stroke", "#222");
+        this.actionLine.setAttribute("stroke-width", "2");
+
+        this.actionRect = document.createElementNS(NS, "rect");
+        this.actionRect.setAttribute("fill", "white");
+        this.actionRect.setAttribute("stroke", "#222");
+        this.actionRect.setAttribute("stroke-width", "2");
+
+        this.actionText = document.createElementNS(NS, "text");
+        this.actionText.setAttribute("font-family", "Segoe UI");
+        this.actionText.setAttribute("font-size", "18");
+        this.actionText.setAttribute("dominant-baseline", "middle");
+
         this.group.appendChild(this.rect);
         this.group.appendChild(this.mark);
         this.group.appendChild(this.text);
+        this.group.appendChild(this.actionLine);
+        this.group.appendChild(this.actionRect);
+        this.group.appendChild(this.actionText);
 
         this.updateGraphics();
 
@@ -201,7 +218,41 @@ class StepView {
             "y",
             this.y + this.height / 2 + 6
         );
+        if (this.step.action === "") {
 
+            this.actionLine.setAttribute("visibility", "hidden");
+            this.actionRect.setAttribute("visibility", "hidden");
+            this.actionText.setAttribute("visibility", "hidden");
+
+        }
+        else {
+
+            this.actionLine.setAttribute("visibility", "visible");
+            this.actionRect.setAttribute("visibility", "visible");
+            this.actionText.setAttribute("visibility", "visible");
+
+            const x = this.x + this.width;
+            const y = this.y + this.height / 2;
+
+            this.actionLine.setAttribute("x1", x);
+            this.actionLine.setAttribute("y1", y);
+            this.actionLine.setAttribute("x2", x + 12);
+            this.actionLine.setAttribute("y2", y);
+
+            this.actionText.setAttribute("x", x + 20);
+            this.actionText.setAttribute("y", this.y + this.height / 2);
+            this.actionText.textContent = this.step.action;
+
+            const width = 12 * this.step.action.length + 20;
+            this.actionRect.setAttribute("x", x + 12);
+            this.actionRect.setAttribute("y", this.y);
+            this.actionRect.setAttribute(
+                "width",
+                width
+            );
+            this.actionRect.setAttribute("height", this.height);
+
+        }
     }
 
     refresh() {

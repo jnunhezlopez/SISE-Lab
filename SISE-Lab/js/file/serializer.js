@@ -24,8 +24,8 @@ class Serializer {
             data.steps.push({
 
                 name: step.name,
-                initial: step.initial
-
+                initial: step.initial,
+                action: step.action
             });
 
         });
@@ -124,9 +124,10 @@ class Serializer {
                 step.name,
 
                 step.initial
+           
 
             );
-
+            s.setAction(step.action ?? "");
             nodeMap.set(step.name, s);
 
         });

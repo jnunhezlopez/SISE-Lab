@@ -37,9 +37,10 @@ class Renderer {
         //console.log(this.diagram.steps.length);
         // Dibujar todas las etapas
         this.diagram.steps.forEach(step => {
-            //console.log(step.name);
+            console.log(step.name);
             //const position = this.layout.stepPosition(this.stepViews.length);
             const position = this.layout.positionOf(step);
+            console.log(position);
             const view = new StepView(step, position.x, position.y);
             this.stepViews.push(view);
             //console.log(this.stepViews.length);
