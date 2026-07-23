@@ -118,7 +118,8 @@ class Renderer {
 
                 this.nodeClicked(stepView.step);
 
-            };           
+            };   
+
             view.onDoubleClick = stepView => {
 
                 const name = prompt(
@@ -207,7 +208,27 @@ class Renderer {
 
                 this.nodeClicked(transitionView.transition);
 
-            };            
+            };     
+            view.onDoubleClick = transitionView => {
+
+                const receptivity = prompt(
+
+                    "Receptividad:",
+
+                    transitionView.transition.receptivity
+
+                );
+
+                if (receptivity !== null) {
+
+                    transitionView.transition.receptivity = receptivity;
+
+                }
+
+                transitionView.text.textContent =
+                    transitionView.transition.receptivity;
+
+            };                   
             view.draw(this.svg.svg);
             view.onMove = () => {
                 this.layout.updatePosition(

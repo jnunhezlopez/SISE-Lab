@@ -29,8 +29,8 @@ class TransitionView {
         this.startMouseX = 0;
         this.startMouseY = 0;
 
-        //this.onClick = null;
         this.onSelect = null;
+        this.onDoubleClick = null;
     }
 
     draw(svg) {
@@ -87,6 +87,17 @@ class TransitionView {
             }
 
         });
+        this.group.addEventListener("dblclick", event => {
+
+            event.stopPropagation();
+
+            if (this.onDoubleClick) {
+
+                this.onDoubleClick(this);
+
+            }
+
+        });        
         svg.appendChild(this.group);
 
     }
