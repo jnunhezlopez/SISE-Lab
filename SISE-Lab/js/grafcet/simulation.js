@@ -31,17 +31,23 @@ class Simulation {
 
         this.renderer.transitionViews.forEach(view => {
 
-            view.onClick(() => {
+        view.onClick(() => {
 
-                if (!this.isManual()) {
+            if (this.renderer.editMode) {
 
-                    return;
+                return;
 
-                }
+            }
 
-                this.fireTransition(view.transition);
+            if (!this.isManual()) {
 
-            });
+                return;
+
+            }
+
+            this.fireTransition(view.transition);
+
+        });
 
         });
         setInterval(() => {

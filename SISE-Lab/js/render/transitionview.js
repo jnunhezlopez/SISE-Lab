@@ -22,6 +22,8 @@ class TransitionView {
         this.enabled = false;
 
         this.dragging = false;
+        this.draggable = true;
+
         this.hasMoved = false;
         // Función de aviso cuando cambia de posición
         this.onMove = null;        
@@ -88,7 +90,11 @@ class TransitionView {
 
         });
         this.group.addEventListener("dblclick", event => {
+            if (!this.draggable) {
 
+                return;
+
+            }
             event.stopPropagation();
 
             if (this.onDoubleClick) {
@@ -105,7 +111,11 @@ class TransitionView {
     installDrag(svg) {
 
         this.group.addEventListener("mousedown", event => {
+            if (!this.draggable) {
 
+                return;
+
+            }
             this.dragging = true;
             this.hasMoved = false;
             this.startMouseX = event.offsetX;

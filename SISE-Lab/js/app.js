@@ -37,6 +37,25 @@ let engine = new Engine(diagram);
 let renderer = new Renderer(svgCanvas, diagram, engine);
 
 renderer.render();
+document
+    .getElementById("btnEdit")
+    .addEventListener("click", () => {
+
+        renderer.setEditMode(true);
+        document.getElementById("modeIndicator")
+            .textContent = "⚪ EDICIÓN";
+
+    });
+
+document
+    .getElementById("btnRun")
+    .addEventListener("click", () => {
+
+        renderer.setEditMode(false);
+        document.getElementById("modeIndicator")
+            .textContent = "🟢 SIMULACIÓN";
+
+    });
 let  simulation = new Simulation(diagram, engine, renderer);
 renderer.simulation = simulation;
 simulation.start();
@@ -62,7 +81,12 @@ window.saveGrafcet = function () {
 //----------------------------------------------------------
 
 window.loadGrafcet = function () {
+    renderer.setEditMode(true);
 
+    document
+        .getElementById("modeIndicator")
+        .textContent = "⚪ EDICIÓN";
+        
     FileManager.load(result => {
 
         //--------------------------------------------------
@@ -156,7 +180,32 @@ document
 document
     .getElementById("btnLoad")
     .addEventListener("click", loadGrafcet);
-/* console.log("Marcado inicial");
+
+
+    
+document
+    .getElementById("btnEdit")
+    .addEventListener("click", () => {
+
+        renderer.editMode = true;
+
+        document.getElementById("modeIndicator")
+            .textContent = "⚪ EDICIÓN";
+
+    });
+
+document
+    .getElementById("btnRun")
+    .addEventListener("click", () => {
+
+        renderer.editMode = false;
+
+        document.getElementById("modeIndicator")
+            .textContent = "🟢 SIMULACIÓN";
+
+    });
+
+    /* console.log("Marcado inicial");
 
 console.table(diagram.markingVector());
 

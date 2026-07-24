@@ -19,6 +19,7 @@ class StepView {
         this.height = 45;
 
         this.dragging = false;
+        this.draggable = true;
         // Función de aviso cuando cambia de posición
         this.onMove = null;
         this.hasMoved = false;
@@ -27,7 +28,7 @@ class StepView {
 
         this.onSelect = null;
         this.onDoubleClick = null;
-        
+
     }
 
     draw(svg) {
@@ -97,7 +98,11 @@ class StepView {
 
         });
         this.group.addEventListener("dblclick", event => {
+            if (!this.draggable) {
 
+                return;
+
+            }
             event.stopPropagation();
 
             if (this.onDoubleClick) {
@@ -114,7 +119,11 @@ class StepView {
     installDrag(svg) {
 
         this.group.addEventListener("mousedown", event => {
+            if (!this.draggable) {
 
+                return;
+
+            }
             this.dragging = true;
             this.hasMoved = false;
             this.startMouseX = event.offsetX;

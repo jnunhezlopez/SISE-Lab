@@ -20,27 +20,41 @@ class Renderer {
         this.transitionMap = new Map();
         this.connectionViews = [];
         this.mode = "select";
+        this.editMode = true;
 
         this.selectedNode = null;
+
 
         document
             .getElementById("btnStep")
             .addEventListener("click", () => {
+                if (!this.editMode) {
 
+                    return;
+
+                }
                 this.mode = "step";
 
              });
         document
             .getElementById("btnTransition")
             .addEventListener("click", () => {
+                if (!this.editMode) {
 
+                    return;
+
+                }
                 this.mode = "transition";
 
             });   
         document
             .getElementById("btnConnect")
             .addEventListener("click", () => {
+                if (!this.editMode) {
 
+                    return;
+
+                }
                 this.mode = "connect";
                 this.selectedNode = null;
 
@@ -89,7 +103,23 @@ class Renderer {
 
         });              
     }
+    setEditMode(editMode) {
 
+        this.editMode = editMode;
+
+        this.stepViews.forEach(view => {
+
+            view.draggable = editMode;
+
+        });
+
+        this.transitionViews.forEach(view => {
+
+            view.draggable = editMode;
+
+        });
+
+    }
     render() {
 
         // Limpiar el SVG
