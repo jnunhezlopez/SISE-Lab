@@ -58,13 +58,22 @@ class Renderer {
                 this.mode = "connect";
                 this.selectedNode = null;
 
-            });               
+            });  
+        // Botón click en Etapa crea una etapa             
         this.svg.svg.addEventListener("click", event => {
 
             if (this.mode === "step") {
 
+                const marked = confirm(
+                    "¿Etapa inicialmente marcada?"
+                );
+
                 const step = this.diagram.addStep(
-                    "S" + this.diagram.steps.length
+
+                    "S" + this.diagram.steps.length,
+
+                    marked
+
                 );
 
                 this.layout.updatePosition(

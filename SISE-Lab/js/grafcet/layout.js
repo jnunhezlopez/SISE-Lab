@@ -55,11 +55,11 @@ class Layout {
         // Constantes gráficas
         //------------------------------------------------------
 
-        this.STEP_X = 98;//80;
-        this.STEP_Y = 78;//80;
+        this.STEP_X = 80;//80;
+        this.STEP_Y = 80;//80;
 
         this.COLUMN_SPACING = 180;
-        this.ROW_SPACING = 80;
+        this.ROW_SPACING = 60;
         //------------------------------------------------------
         // Rejilla de edición
         //------------------------------------------------------

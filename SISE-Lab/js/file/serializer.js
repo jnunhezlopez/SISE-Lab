@@ -25,6 +25,9 @@ class Serializer {
 
                 name: step.name,
                 initial: step.initial,
+                //marked : step.marked,
+                //si se descomenta lo anterior, se guarda el marcado actual
+                //comentado, guarda el marcado inicial
                 action: step.action
             });
 
@@ -123,8 +126,11 @@ class Serializer {
 
                 step.name,
 
-                step.initial
-           
+                step.initial//step.marked
+           //tal y como está recupera el marcado inicial
+           //si se sustituye por lo comentado, recupera el 
+           //marcado del momento de grabación
+           //debe coordinarse con el método de grabación
 
             );
             s.setAction(step.action ?? "");
