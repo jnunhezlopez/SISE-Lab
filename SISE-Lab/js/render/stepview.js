@@ -15,8 +15,8 @@ class StepView {
         this.x = x;
         this.y = y;
 
-        this.width = 45;
-        this.height = 45;
+        this.width = 40;
+        this.height = 40;
 
         this.dragging = false;
         this.draggable = true;

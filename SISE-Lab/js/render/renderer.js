@@ -132,7 +132,8 @@ class Renderer {
     render() {
 
         // Limpiar el SVG
-        this.svg.svg.replaceChildren();
+        //this.svg.svg.replaceChildren();
+        this.svg.clear();
         this.stepViews = [];
         this.transitionViews = [];
         this.connectionViews = [];

@@ -135,6 +135,7 @@ class Layout {
                 level * this.ROW_SPACING
 
         };
+        console.log(p, this.snapToGrid(p.x,p.y));
         return this.snapToGrid(p.x, p.y);
     }
     //----------------------------------------------------------
@@ -166,7 +167,7 @@ class Layout {
         // Reiniciar todas las estructuras internas
         this.reset();
 
-        // Buscar la etapa inicial
+/*         // Buscar la etapa inicial
         const initialStep = diagram.initialStep();
 
         if (!initialStep) {
@@ -180,7 +181,30 @@ class Layout {
         this.columns.set(initialStep, 0);
 
         // Comenzar recorrido
-        this.visitStep(initialStep, diagram);
+        this.visitStep(initialStep, diagram); */
+        //--------------------------------------------------
+        // Recorrer todas las componentes conexas
+        //--------------------------------------------------
+
+        let nextColumn = 0;
+
+        diagram.steps.forEach(step => {
+
+            if (this.visited.has(step)) {
+
+                return;
+
+            }
+
+            this.levels.set(step, 0);
+            this.columns.set(step, nextColumn);
+
+            this.visitStep(step, diagram);
+
+            nextColumn += 2;
+
+        });
+
 
         // Una vez calculados niveles y columnas,
         // convertirlos en coordenadas gráficas.
@@ -227,7 +251,11 @@ class Layout {
                     this.levelOf(step)
 
                 );
-
+console.log(
+    step.name,
+    this.columnOf(step),
+    this.levelOf(step)
+);
                 this.setPosition(step, p.x, p.y);
 
             }
@@ -250,7 +278,11 @@ class Layout {
                     this.TRANSITION_OFFSET_X
 
                 );
-
+console.log(
+    transition.receptivity,
+    this.columnOf(transition),
+    this.levelOf(transition)
+);
                 this.setPosition(transition, p.x, p.y);
 
             }
