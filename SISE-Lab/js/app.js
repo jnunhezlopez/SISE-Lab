@@ -2,7 +2,7 @@
 const svgCanvas=new SVGCanvas("canvas");
 let diagram = new Diagram();
 
-const s0 = diagram.addStep("S0", true);
+/* const s0 = diagram.addStep("S0", true);
 const s1 = diagram.addStep("S1");
 s1.setAction("Motor ON");
 const s2 = diagram.addStep("S2");
@@ -29,7 +29,7 @@ diagram.connect(t1, s2);
 diagram.connect(t2, s3);
 diagram.connect(t3, s4);
 diagram.connect(t4, s5);
-diagram.connect(t5, s0);
+diagram.connect(t5, s0); */
 
 
 let engine = new Engine(diagram);

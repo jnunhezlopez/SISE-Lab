@@ -130,9 +130,9 @@ class Renderer {
 
     }
     render() {
-
         // Limpiar el SVG
         //this.svg.svg.replaceChildren();
+        //console.count("Renderer.render");
         this.svg.clear();
         this.stepViews = [];
         this.transitionViews = [];
