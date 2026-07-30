@@ -10,7 +10,7 @@ class Renderer {
         this.engine = engine;
 
         this.layout = new Layout();
-
+        this.savedPositions = null;
         // Vistas de las etapas
         this.stepViews = [];
         // Vistas de las transiciones
@@ -34,6 +34,8 @@ class Renderer {
 
                 }
                 this.mode = "step";
+                document.getElementById("modeIndicator")
+                    .textContent = "➕ AÑADIR ETAPA: haz clic en el lienzo";
 
              });
         document
@@ -45,6 +47,8 @@ class Renderer {
 
                 }
                 this.mode = "transition";
+                document.getElementById("modeIndicator")
+                    .textContent = "━ AÑADIR TRANSICIÓN: haz clic en el lienzo";
 
             });   
         document
@@ -57,6 +61,8 @@ class Renderer {
                 }
                 this.mode = "connect";
                 this.selectedNode = null;
+                document.getElementById("modeIndicator")
+                    .textContent = "🔗 CONECTAR: selecciona el origen";
 
             });  
         // Botón click en Etapa crea una etapa             
@@ -138,8 +144,10 @@ class Renderer {
         this.transitionViews = [];
         this.connectionViews = [];
         // Inicializar posiciones por defecto
-        this.layout.build(this.diagram);
-
+        //this.layout.build(this.diagram);
+        if (this.savedPositions ===null){
+            this.layout.build(this.diagram);
+        }
 
         this.stepMap.clear();
         this.transitionMap.clear();
@@ -148,7 +156,16 @@ class Renderer {
         this.diagram.steps.forEach(step => {
             //console.log(step.name);
             //const position = this.layout.stepPosition(this.stepViews.length);
-            const position = this.layout.positionOf(step);
+
+            //const position = this.layout.positionOf(step);
+
+            let position;
+            if (this.savedPositions && this.savedPositions[step.name]) {
+                position = this.savedPositions[step.name];
+            } else {
+                position = this.layout.positionOf(step);
+            }
+
             //console.log(position);
             const view = new StepView(step, position.x, position.y);
             this.stepViews.push(view);
@@ -222,11 +239,6 @@ class Renderer {
                 this.refreshConnections();
 
             };            
-/*             view.onMove = () => {
-
-                this.refreshConnections();
-
-            }; */
         });
 
         // Dibujar todas las transiciones
@@ -235,7 +247,14 @@ class Renderer {
             // const position = this.layout.transitionPosition(
             //     this.transitionViews.length
             // );
-            const position = this.layout.positionOf(transition);
+            //const position = this.layout.positionOf(transition);
+            let position;
+            if (this.savedPositions && this.savedPositions[transition.receptivity]) {
+                position = this.savedPositions[transition.receptivity];
+            } else {
+                position = this.layout.positionOf(transition);
+            }
+
             const view = new TransitionView(
                 transition,
                 position.x,
@@ -285,6 +304,32 @@ class Renderer {
             view.transition = transition;
 
         });
+
+        // Contar saltos por origen para espaciar las etiquetas
+
+        const jumpCounts = new Map();
+        this.diagram.arcs.forEach(arc => {
+            const isJump =
+                (() => {
+                    const targetView = arc.target instanceof Step
+                        ? this.stepMap.get(arc.target)
+                        : this.transitionMap.get(arc.target);
+                    const sourceView = arc.source instanceof Step
+                        ? this.stepMap.get(arc.source)
+                        : this.transitionMap.get(arc.source);
+                    if (!sourceView || !targetView) return false;
+                    return targetView.y < sourceView.y ||
+                        Math.abs(targetView.y - sourceView.y) > 280;
+                })();
+            if (isJump && arc.target instanceof Step) {
+                const key = arc.source instanceof Step
+                    ? "S:" + arc.source.name
+                    : "T:" + arc.source.receptivity;
+                jumpCounts.set(key, (jumpCounts.get(key) || 0) + 1);
+            }
+        });
+        const jumpOffsets = new Map();
+
         // Dibujar los enlaces a partir de los arcos del modelo
 
         this.diagram.arcs.forEach(arc => {
@@ -350,22 +395,21 @@ class Renderer {
             this.connectionViews.push(connection); */
             let connection;
 
-            //------------------------------------------------------
-            // ¿Es un salto?
-            //------------------------------------------------------
-
             const isJump =
 
                 targetView.y < sourceView.y ||
 
                 Math.abs(targetView.y - sourceView.y) > 280;
 
-            //------------------------------------------------------
-            // Crear la vista adecuada
-            //------------------------------------------------------
-
             if (isJump && arc.target instanceof Step) {
 
+                const key = arc.source instanceof Step
+                    ? "S:" + arc.source.name
+                    : "T:" + arc.source.receptivity;
+                const total = jumpCounts.get(key) || 1;
+                const idx = jumpOffsets.get(key) || 0;
+                jumpOffsets.set(key, idx + 1);
+                const centre = (total - 1) / 2;
                 connection = new JumpConnectionView(
 
                     this.svg.svg,
@@ -373,7 +417,8 @@ class Renderer {
                     sourceView,
                     targetView,
 
-                    arc.target
+                    arc.target,
+                    idx - centre
 
                 );
 
@@ -397,13 +442,11 @@ class Renderer {
             this.connectionViews.push(connection);
 
         });
-        // Refrescar las vistas para reflejar el estado actual del modelo
         this.refresh();
         if (this.simulation) {
-
             this.simulation.start();
-
         }
+        this.savedPositions = null;
     }
     refreshConnections() {
 
@@ -493,7 +536,8 @@ class Renderer {
         if (this.selectedNode === null) {
 
             this.selectedNode = node;
-
+            document.getElementById("modeIndicator")
+                .textContent = "🔗 CONECTAR: selecciona el destino";
             return;
 
         }
@@ -510,7 +554,37 @@ class Renderer {
 
         this.mode = "select";
 
+        document.getElementById("modeIndicator")
+            .textContent = "⚪ EDICIÓN";
+
         this.render();
 
     } 
+    setSavedPositions(positions) {
+
+        this.savedPositions = positions;
+
+    }
+    setDiagram(diagram, engine, savedPositions) {
+
+        this.diagram = diagram;
+        this.engine = engine;
+        this.layout = new Layout();
+
+        if (savedPositions) {
+
+            diagram.steps.forEach(step => {
+                const p = savedPositions[step.name];
+                if (p) this.layout.setPosition(step, p.x, p.y);
+            });
+            diagram.transitions.forEach(t => {
+                const p = savedPositions[t.receptivity];
+                if (p) this.layout.setPosition(t, p.x, p.y);
+            });
+
+        }
+
+        this.setSavedPositions(savedPositions);
+
+    }
 }

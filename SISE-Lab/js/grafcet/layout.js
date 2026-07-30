@@ -135,7 +135,6 @@ class Layout {
                 level * this.ROW_SPACING
 
         };
-        console.log(p, this.snapToGrid(p.x,p.y));
         return this.snapToGrid(p.x, p.y);
     }
     //----------------------------------------------------------
@@ -182,10 +181,6 @@ class Layout {
 
         // Comenzar recorrido
         this.visitStep(initialStep, diagram); */
-        //--------------------------------------------------
-        // Recorrer todas las componentes conexas
-        //--------------------------------------------------
-
         let nextColumn = 0;
 
         diagram.steps.forEach(step => {
@@ -205,9 +200,7 @@ class Layout {
 
         });
 
-
-        // Una vez calculados niveles y columnas,
-        // convertirlos en coordenadas gráficas.
+        this._resolvePendingInputs();
 
         this.computeCoordinates(diagram);
 
@@ -251,11 +244,7 @@ class Layout {
                     this.levelOf(step)
 
                 );
-console.log(
-    step.name,
-    this.columnOf(step),
-    this.levelOf(step)
-);
+
                 this.setPosition(step, p.x, p.y);
 
             }
@@ -278,11 +267,7 @@ console.log(
                     this.TRANSITION_OFFSET_X
 
                 );
-console.log(
-    transition.receptivity,
-    this.columnOf(transition),
-    this.levelOf(transition)
-);
+
                 this.setPosition(transition, p.x, p.y);
 
             }
@@ -436,11 +421,6 @@ console.log(
 
         steps.forEach((step, index) => {
 
-            //--------------------------------------------------
-            // Asignar posición lógica únicamente
-            // la primera vez.
-            //--------------------------------------------------
-
             if (!this.levels.has(step)) {
 
                 this.levels.set(
@@ -454,10 +434,36 @@ console.log(
                 );
 
             }
+            else {
+
+                if (!this.pendingInputs.has(step)) {
+
+                    this.pendingInputs.set(step, []);
+
+                }
+
+                this.pendingInputs.get(step).push(first + index);
+
+            }
 
             this.visitStep(step, diagram);
 
         });
+
+    }
+
+    _resolvePendingInputs() {
+
+        this.pendingInputs.forEach((columns, step) => {
+
+            const current = this.columnOf(step);
+            const all = [current, ...columns];
+            const avg = all.reduce((a, b) => a + b, 0) / all.length;
+            this.columns.set(step, avg);
+
+        });
+
+        this.pendingInputs.clear();
 
     }        
 }

@@ -1,8 +1,6 @@
 const MANUAL_MODE = "manual";
 const AUTOMATIC_MODE = "automatic";
-/**
- * Coordina el funcionamiento del simulador.
- */
+
 class Simulation {
 
     constructor(diagram, engine, renderer) {
@@ -11,7 +9,9 @@ class Simulation {
         this.engine = engine;
         this.renderer = renderer;
 
-        this.mode = MANUAL_MODE; 
+        this.mode = MANUAL_MODE;
+        this._intervalId = null;
+
     }
     setMode(mode) {
 
@@ -25,42 +25,59 @@ class Simulation {
     }
     isAutomatic() {
 
-        return this.mode === AUTOMATIC_MODE;    
+        return this.mode === AUTOMATIC_MODE;
     }
     start() {
 
+        this.stop();
+
         this.renderer.transitionViews.forEach(view => {
 
-        view.onClick(() => {
+            view._simHandler = () => {
 
-            if (this.renderer.editMode) {
+                if (this.renderer.editMode) {
 
-                return;
+                    return;
 
-            }
+                }
 
-            if (!this.isManual()) {
+                if (!this.isManual()) {
 
-                return;
+                    return;
 
-            }
+                }
 
-            this.fireTransition(view.transition);
+                this.fireTransition(view.transition);
+
+            };
+
+            view.onClick(view._simHandler);
 
         });
 
+    }
+    stop() {
+
+        if (this._intervalId) {
+
+            clearInterval(this._intervalId);
+            this._intervalId = null;
+
+        }
+
+        this.renderer.transitionViews.forEach(view => {
+
+            if (view._simHandler) {
+
+                view.removeClick(view._simHandler);
+                view._simHandler = null;
+
+            }
+
         });
-        setInterval(() => {
 
-            this.cycle();
-
-        }, 100);
     }
     fireTransition(transition) {
-
-/*         console.log(
-            `Disparo ${transition.receptivity}`
-        ); */
 
         if (this.engine.fire(transition)) {
 

@@ -1,9 +1,3 @@
-/**
- * StepView
- * --------
- * Representa gráficamente una etapa GRAFCET.
- */
-
 class StepView {
 
     static GRID_SIZE = 20;
@@ -20,7 +14,6 @@ class StepView {
 
         this.dragging = false;
         this.draggable = true;
-        // Función de aviso cuando cambia de posición
         this.onMove = null;
         this.hasMoved = false;
         this.startMouseX = 0;
@@ -29,9 +22,22 @@ class StepView {
         this.onSelect = null;
         this.onDoubleClick = null;
 
+        this.group = null;
+        this.rect = null;
+        this.mark = null;
+        this.text = null;
+        this.actionLine = null;
+        this.actionRect = null;
+        this.actionText = null;
+
+        this._onMouseMove = null;
+        this._onMouseUp = null;
+
     }
 
     draw(svg) {
+
+        this._cleanup();
 
         const NS = "http://www.w3.org/2000/svg";
 
@@ -83,9 +89,10 @@ class StepView {
 
         this.updateGraphics();
 
-        this.installDrag(svg);
+        this._installDrag(svg);
 
         this.refresh();
+
         this.group.addEventListener("click", event => {
 
             event.stopPropagation();
@@ -97,12 +104,15 @@ class StepView {
             }
 
         });
+
         this.group.addEventListener("dblclick", event => {
+
             if (!this.draggable) {
 
                 return;
 
             }
+
             event.stopPropagation();
 
             if (this.onDoubleClick) {
@@ -111,19 +121,49 @@ class StepView {
 
             }
 
-        });        
+        });
+
         svg.appendChild(this.group);
 
     }
 
-    installDrag(svg) {
+    _cleanup() {
+
+        if (this._onMouseMove) {
+
+            this._svg?.removeEventListener("mousemove", this._onMouseMove);
+            this._onMouseMove = null;
+
+        }
+
+        if (this._onMouseUp) {
+
+            window.removeEventListener("mouseup", this._onMouseUp);
+            this._onMouseUp = null;
+
+        }
+
+        if (this.group && this.group.parentNode) {
+
+            this.group.parentNode.removeChild(this.group);
+            this.group = null;
+
+        }
+
+    }
+
+    _installDrag(svg) {
+
+        this._svg = svg;
 
         this.group.addEventListener("mousedown", event => {
+
             if (!this.draggable) {
 
                 return;
 
             }
+
             this.dragging = true;
             this.hasMoved = false;
             this.startMouseX = event.offsetX;
@@ -137,7 +177,7 @@ class StepView {
 
         });
 
-        svg.addEventListener("mousemove", event => {
+        this._onMouseMove = event => {
 
             if (!this.dragging) {
 
@@ -151,22 +191,18 @@ class StepView {
             const dx = event.offsetX - this.startMouseX;
             const dy = event.offsetY - this.startMouseY;
 
-            if (
-
-                Math.abs(dx) > 3 ||
-
-                Math.abs(dy) > 3
-
-            ) {
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
 
                 this.hasMoved = true;
 
             }
+
             if (!this.hasMoved) {
 
                 return;
 
             }
+
             this.updateGraphics();
 
             if (this.onMove) {
@@ -175,9 +211,11 @@ class StepView {
 
             }
 
-        });
+        };
 
-        window.addEventListener("mouseup", () => {
+        svg.addEventListener("mousemove", this._onMouseMove);
+
+        this._onMouseUp = () => {
 
             if (!this.dragging) {
 
@@ -186,6 +224,7 @@ class StepView {
             }
 
             this.dragging = false;
+
             if (!this.hasMoved) {
 
                 this.rect.style.cursor = "grab";
@@ -194,7 +233,6 @@ class StepView {
                 return;
 
             }
-            // Ajustar el CENTRO de la etapa a la cuadrícula
 
             const centerX = this.x + this.width / 2;
             const centerY = this.y + this.height / 2;
@@ -211,24 +249,24 @@ class StepView {
             this.y = snappedCenterY - this.height / 2;
 
             this.updateGraphics();
+
             if (this.onMove) {
 
                 this.onMove(this);
 
             }
+
             this.rect.style.cursor = "grab";
             this.text.style.cursor = "grab";
 
-        });
+        };
+
+        window.addEventListener("mouseup", this._onMouseUp);
 
     }
 
     updateGraphics() {
-/*         console.log(
-            this.step.name,
-            this.x,
-            this.y
-        ); */
+
         this.rect.setAttribute("x", this.x);
         this.rect.setAttribute("y", this.y);
 
@@ -251,6 +289,7 @@ class StepView {
             "y",
             this.y + this.height / 2 + 6
         );
+
         if (this.step.action === "") {
 
             this.actionLine.setAttribute("visibility", "hidden");
@@ -279,13 +318,11 @@ class StepView {
             const width = 12 * this.step.action.length + 20;
             this.actionRect.setAttribute("x", x + 12);
             this.actionRect.setAttribute("y", this.y);
-            this.actionRect.setAttribute(
-                "width",
-                width
-            );
+            this.actionRect.setAttribute("width", width);
             this.actionRect.setAttribute("height", this.height);
 
         }
+
     }
 
     refresh() {
@@ -297,28 +334,22 @@ class StepView {
         }
 
         this.mark.setAttribute(
-
             "visibility",
-
             this.step.marked ? "visible" : "hidden"
-
         );
-        this.actionRect.setAttribute(
 
+        this.actionRect.setAttribute(
             "stroke",
-
             this.step.marked ? "#00AA00" : "#222"
-
         );
 
         this.actionRect.setAttribute(
-
             "stroke-width",
-
             this.step.marked ? "3" : "2"
-
         );
+
     }
+
     refreshText() {
 
         this.text.textContent = this.step.name;

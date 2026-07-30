@@ -1,12 +1,6 @@
-/**
- * JumpConnectionView
- * ------------------
- * Representa un salto GRAFCET.
- */
-
 class JumpConnectionView {
 
-    constructor(svg, sourceView, targetView, targetModel) {
+    constructor(svg, sourceView, targetView, targetModel, offsetIndex = 0) {
 
         this.svg = svg;
 
@@ -14,6 +8,7 @@ class JumpConnectionView {
         this.targetView = targetView;
 
         this.targetModel = targetModel;
+        this.offsetIndex = offsetIndex;
 
         const NS = "http://www.w3.org/2000/svg";
 
@@ -43,8 +38,10 @@ class JumpConnectionView {
 
     update() {
 
+        const yOffset = this.offsetIndex * 16;
+
         const x1 = this.sourceView.x;
-        const y1 = this.sourceView.y + this.sourceView.height;
+        const y1 = this.sourceView.y + this.sourceView.height + yOffset;
 
         const x2 = x1 + 40;
 

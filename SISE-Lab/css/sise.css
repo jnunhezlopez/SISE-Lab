@@ -1,90 +1,75 @@
-body{
-
-    font-family:Segoe UI,Arial,sans-serif;
-
-    background:#ECEFF1;
-
-    margin:40px;
-
-    text-align:center;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-#canvas{
-
-    margin:40px auto;
-
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #ECEFF1;
+    padding: 20px;
+    text-align: center;
 }
 
-.step{
-
-    width:80px;
-
-    height:80px;
-
-    border:3px solid #222;
-
-    border-radius:8px;
-
-    background:#DDDDDD;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    font-size:28px;
-
-    font-weight:bold;
-
-    margin:auto;
-
-    transition:.30s;
-
+h1 {
+    font-size: 24px;
+    color: #37474F;
+    margin-bottom: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
-.step.active{
-
-    background:#4CAF50;
-
-    color:white;
-
-}
-.transition{
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-
-    margin:8px 0;
-
+#canvas {
+    margin: 16px auto;
+    display: inline-block;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    border-radius: 6px;
+    overflow: hidden;
 }
 
-.transition-line{
-
-    width:3px;
-    height:20px;
-    background:#222;
-
+#canvas svg {
+    display: block;
 }
 
-.transition-bar{
-
-    width:40px;
-    height:4px;
-    background:#222;
-
+.buttons {
+    margin: 16px auto;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
-.transition-label{
+.buttons button {
+    padding: 8px 18px;
+    border: 1px solid #B0BEC5;
+    border-radius: 6px;
+    background: white;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 14px;
+    color: #37474F;
+    cursor: pointer;
+    transition: all .15s ease;
+    user-select: none;
+}
 
-    margin-top:6px;
+.buttons button:hover {
+    background: #E3F2FD;
+    border-color: #42A5F5;
+    box-shadow: 0 1px 4px rgba(66, 165, 245, 0.2);
+}
 
-    font-size:13px;
+.buttons button:active {
+    transform: translateY(1px);
+}
 
-    color:#444;
-
-    font-style:italic;
-
+#modeIndicator {
+    font-size: 14px;
+    color: #546E7A;
+    padding: 6px 14px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #CFD8DC;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 }

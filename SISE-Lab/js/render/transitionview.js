@@ -1,6 +1,3 @@
-/**
- * Representa una transición GRAFCET.
- */
 class TransitionView {
 
     static GRID_SIZE = 20;
@@ -17,7 +14,7 @@ class TransitionView {
         this.barGap = 6;
 
         this.width = 36;
-        this.height = 2 * this.lineHeight + 2 * this.barGap; //60
+        this.height = 2 * this.lineHeight + 2 * this.barGap;
 
         this.enabled = false;
 
@@ -25,17 +22,29 @@ class TransitionView {
         this.draggable = true;
 
         this.hasMoved = false;
-        // Función de aviso cuando cambia de posición
-        this.onMove = null;        
-        
+        this.onMove = null;
+
         this.startMouseX = 0;
         this.startMouseY = 0;
 
         this.onSelect = null;
         this.onDoubleClick = null;
+
+        this.group = null;
+        this.topLine = null;
+        this.bar = null;
+        this.bottomLine = null;
+        this.text = null;
+
+        this._onMouseMove = null;
+        this._onMouseUp = null;
+        this._clickHandler = null;
+
     }
 
     draw(svg) {
+
+        this._cleanup();
 
         const NS = "http://www.w3.org/2000/svg";
 
@@ -75,9 +84,10 @@ class TransitionView {
 
         this.updateGraphics();
 
-        this.installDrag(svg);
+        this._installDrag(svg);
 
         this.refresh();
+
         this.group.addEventListener("click", event => {
 
             event.stopPropagation();
@@ -89,12 +99,15 @@ class TransitionView {
             }
 
         });
+
         this.group.addEventListener("dblclick", event => {
+
             if (!this.draggable) {
 
                 return;
 
             }
+
             event.stopPropagation();
 
             if (this.onDoubleClick) {
@@ -103,19 +116,56 @@ class TransitionView {
 
             }
 
-        });        
+        });
+
         svg.appendChild(this.group);
 
     }
 
-    installDrag(svg) {
+    _cleanup() {
+
+        if (this._clickHandler) {
+
+            this.group?.removeEventListener("click", this._clickHandler);
+            this._clickHandler = null;
+
+        }
+
+        if (this._onMouseMove) {
+
+            this._svg?.removeEventListener("mousemove", this._onMouseMove);
+            this._onMouseMove = null;
+
+        }
+
+        if (this._onMouseUp) {
+
+            window.removeEventListener("mouseup", this._onMouseUp);
+            this._onMouseUp = null;
+
+        }
+
+        if (this.group && this.group.parentNode) {
+
+            this.group.parentNode.removeChild(this.group);
+            this.group = null;
+
+        }
+
+    }
+
+    _installDrag(svg) {
+
+        this._svg = svg;
 
         this.group.addEventListener("mousedown", event => {
+
             if (!this.draggable) {
 
                 return;
 
             }
+
             this.dragging = true;
             this.hasMoved = false;
             this.startMouseX = event.offsetX;
@@ -128,7 +178,7 @@ class TransitionView {
 
         });
 
-        svg.addEventListener("mousemove", event => {
+        this._onMouseMove = event => {
 
             if (!this.dragging) {
 
@@ -142,31 +192,31 @@ class TransitionView {
             const dx = event.offsetX - this.startMouseX;
             const dy = event.offsetY - this.startMouseY;
 
-            if (
-
-                Math.abs(dx) > 3 ||
-
-                Math.abs(dy) > 3
-
-            ) {
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
 
                 this.hasMoved = true;
 
             }
+
             if (!this.hasMoved) {
 
                 return;
 
             }
+
             this.updateGraphics();
+
             if (this.onMove) {
 
                 this.onMove();
 
             }
-        });
 
-        window.addEventListener("mouseup", () => {
+        };
+
+        svg.addEventListener("mousemove", this._onMouseMove);
+
+        this._onMouseUp = () => {
 
             if (!this.dragging) {
 
@@ -206,10 +256,13 @@ class TransitionView {
                 this.onMove();
 
             }
+
             this.bar.style.cursor = "grab";
             this.text.style.cursor = "grab";
 
-        });
+        };
+
+        window.addEventListener("mouseup", this._onMouseUp);
 
     }
 
@@ -249,9 +302,6 @@ class TransitionView {
 
     }
 
-    /**
-     * Muestra una animación breve de disparo.
-     */
     flash() {
 
         if (!this.bar) return;
@@ -260,9 +310,6 @@ class TransitionView {
 
     }
 
-    /**
-     * Finaliza la animación y recupera el color normal.
-     */
     unflash() {
 
         this.refresh();
@@ -273,7 +320,7 @@ class TransitionView {
 
         this.group.style.cursor = "pointer";
 
-        this.group.addEventListener("click", event => {
+        const handler = event => {
 
             if (this.hasMoved) {
 
@@ -287,7 +334,23 @@ class TransitionView {
 
             callback(event);
 
-        });
+        };
+
+        this._clickHandler = handler;
+        this.group.addEventListener("click", handler);
+
+    }
+
+    removeClick() {
+
+        if (this._clickHandler) {
+
+            this.group.removeEventListener("click", this._clickHandler);
+            this._clickHandler = null;
+
+        }
+
+        this.group.style.cursor = "";
 
     }
 
