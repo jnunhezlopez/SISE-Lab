@@ -87,7 +87,7 @@ class FileManager {
 
                         Serializer.deserialize(json);
 
-                    callback(result);
+                    callback(result, file.name);
 
                 }
 
