@@ -354,4 +354,20 @@ class TransitionView {
 
     }
 
+    setSelected(selected) {
+
+        if (!this.bar) {
+
+            return;
+
+        }
+
+        const color = selected ? "#42A5F5" : "#222";
+
+        this.topLine.setAttribute("stroke", color);
+        this.bar.setAttribute("stroke", color);
+        this.bottomLine.setAttribute("stroke", color);
+
+    }
+
 }

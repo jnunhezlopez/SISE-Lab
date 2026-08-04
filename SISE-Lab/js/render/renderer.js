@@ -65,6 +65,37 @@ class Renderer {
                     .textContent = "🔗 CONECTAR: selecciona el origen";
 
             });  
+        document
+            .getElementById("btnDelete")
+            .addEventListener("click", () => {
+                if (!this.editMode) {
+
+                    return;
+
+                }
+                this.deleteSelected();
+
+            });
+        // Tecla Supr: borra el nodo seleccionado
+        document.addEventListener("keydown", event => {
+
+            if (!this.editMode) {
+
+                return;
+
+            }
+
+            if (event.key !== "Delete" && event.key !== "Supr") {
+
+                return;
+
+            }
+
+            event.preventDefault();
+
+            this.deleteSelected();
+
+        });
         // Botón click en Etapa crea una etapa             
         this.svg.svg.addEventListener("click", event => {
 
@@ -116,6 +147,15 @@ class Renderer {
 
             }
 
+            // Clic en el lienzo vacío: deseleccionar
+            if (this.mode === "select") {
+
+                this.selectedNode = null;
+
+                this.applySelection();
+
+            }
+
         });              
     }
     setEditMode(editMode) {
@@ -133,6 +173,18 @@ class Renderer {
             view.draggable = editMode;
 
         });
+
+        // Al pasar a simulación se descarta la selección
+        if (!editMode) {
+
+            this.selectedNode = null;
+
+        }
+
+        this.applySelection();
+
+        // Recalcular transiciones habilitadas (barra verde)
+        this.refresh();
 
     }
     render() {
@@ -447,6 +499,7 @@ class Renderer {
             this.simulation.start();
         }
         this.savedPositions = null;
+        this.applySelection();
     }
     refreshConnections() {
 
@@ -527,6 +580,23 @@ class Renderer {
     }
    nodeClicked(node) {
 
+        if (this.mode === "select") {
+
+            // En simulación no se selecciona, solo se dispara
+            if (!this.editMode) {
+
+                return;
+
+            }
+
+            this.selectedNode = node;
+
+            this.applySelection();
+
+            return;
+
+        }
+
         if (this.mode !== "connect") {
 
             return;
@@ -560,6 +630,54 @@ class Renderer {
         this.render();
 
     } 
+    applySelection() {
+
+        this.stepViews.forEach(view => view.setSelected(false));
+        this.transitionViews.forEach(view => view.setSelected(false));
+
+        if (!this.selectedNode) {
+
+            return;
+
+        }
+
+        const view = this.stepMap.get(this.selectedNode) ||
+            this.transitionMap.get(this.selectedNode);
+
+        if (view) {
+
+            view.setSelected(true);
+
+        }
+
+    }
+    deleteSelected() {
+
+        if (this.mode !== "select" || !this.selectedNode) {
+
+            return;
+
+        }
+
+        if (this.selectedNode instanceof Step) {
+
+            this.diagram.removeStep(this.selectedNode);
+
+        }
+        else if (this.selectedNode instanceof Transition) {
+
+            this.diagram.removeTransition(this.selectedNode);
+
+        }
+
+        this.selectedNode = null;
+
+        document.getElementById("modeIndicator")
+            .textContent = "⚪ EDICIÓN";
+
+        this.render();
+
+    }
     setSavedPositions(positions) {
 
         this.savedPositions = positions;

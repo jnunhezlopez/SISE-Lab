@@ -39,6 +39,50 @@ class Diagram {
         return arc;
 
     }
+    removeArc(arc) {
+
+        const index = this.arcs.indexOf(arc);
+
+        if (index !== -1) {
+
+            this.arcs.splice(index, 1);
+
+        }
+
+    }
+    removeArcsOf(node) {
+
+        this.arcs = this.arcs.filter(arc =>
+            arc.source !== node && arc.target !== node
+        );
+
+    }
+    removeStep(step) {
+
+        const index = this.steps.indexOf(step);
+
+        if (index !== -1) {
+
+            this.steps.splice(index, 1);
+
+        }
+
+        this.removeArcsOf(step);
+
+    }
+    removeTransition(transition) {
+
+        const index = this.transitions.indexOf(transition);
+
+        if (index !== -1) {
+
+            this.transitions.splice(index, 1);
+
+        }
+
+        this.removeArcsOf(transition);
+
+    }
     previousSteps(transition) {
 
         return this.arcs

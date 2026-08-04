@@ -357,4 +357,24 @@ class StepView {
         this.updateGraphics();
 
     }
+
+    setSelected(selected) {
+
+        if (!this.rect) {
+
+            return;
+
+        }
+
+        this.rect.setAttribute(
+            "stroke",
+            selected ? "#42A5F5" : "#222"
+        );
+
+        this.rect.setAttribute(
+            "stroke-width",
+            selected ? "3" : "2"
+        );
+
+    }
 }
