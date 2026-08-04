@@ -13,15 +13,17 @@ El proyecto nace con un doble objetivo:
 
 ⚠️ Proyecto en desarrollo.
 
-La versión actual constituye un primer prototipo funcional que incorpora:
+La versión actual es un prototipo funcional que incorpora:
 
-- Modelo interno de GRAFCET.
-- Motor de simulación.
-- Representación gráfica mediante SVG.
-- Edición básica de etapas y transiciones.
-- Guardado y carga de proyectos en formato JSON.
+- Modelo interno de GRAFCET (etapas, transiciones y arcos).
+- Motor de evolución del marcado con **simulación manual**: se dispara una transición habilitada al hacer clic sobre ella (barra en verde cuando está habilitada).
+- Representación gráfica en SVG con rejilla.
+- Edición visual: añadir etapas y transiciones, conectarlas, arrastrar con ajuste a rejilla y auto-layout por niveles/columnas.
+- **Selección y borrado** de elementos (tecla Supr o botón Borrar), eliminando también sus arcos.
+- Guardado y carga de proyectos en **JSON**, con **sobrescritura** del archivo abierto y **"Guardar como"** (File System Access API en Chrome/Edge; descarga de copia como alternativa).
+- Interfaz en español.
 
-El editor gráfico presenta todavía limitaciones importantes y no debe considerarse una versión estable para uso docente continuado.
+Limitaciones conocidas: el modo de simulación automática está declarado pero sin implementar, y no hay linter ni suite de pruebas configurados.
 
 ---
 
@@ -37,15 +39,15 @@ El editor gráfico presenta todavía limitaciones importantes y no debe consider
 
 ## Arquitectura
 
-El proyecto se estructura en varios bloques independientes:
+El proyecto se estructura en bloques independientes con patrón **Modelo–Vista**:
 
-- Modelo (`Diagram`, `Step`, `Transition`, `Arc`)
-- Motor de simulación (`Engine`)
-- Renderizado SVG (`Renderer` y vistas gráficas)
-- Persistencia (`FileManager`)
-- Interfaz de usuario
+- **Modelo** (`js/grafcet/`): `Node`, `Step`, `Transition`, `Arc`, `Diagram`, `Engine`, `Layout`, `Simulation`.
+- **Vista** (`js/render/`): `Renderer`, `StepView`, `TransitionView`, `ConnectionView`, `JumpConnectionView`.
+- **Core** (`js/core/`): `SVGCanvas` (lienzo SVG y rejilla).
+- **Persistencia** (`js/file/`): `Serializer` (JSON) y `FileManager` (guardar/cargar).
+- **Orquestación**: `js/app.js` conecta modelo, motor y renderer con los botones de `index.html`.
 
-La arquitectura pretende mantener separadas las responsabilidades de representación, simulación y almacenamiento.
+La arquitectura mantiene separadas las responsabilidades de representación, simulación y almacenamiento. El editor se abre directamente desde `index.html`, sin build ni dependencias externas.
 
 ---
 
@@ -60,25 +62,11 @@ No se emplea ningún framework externo.
 
 ---
 
-## Estado actual
-
-El modelo y el motor de simulación son funcionales.
-
-El editor gráfico continúa en evolución y está previsto un rediseño arquitectónico para mejorar:
-
-- Renderizado.
-- Gestión de eventos.
-- Edición gráfica.
-- Conexiones complejas.
-- Mantenibilidad del código.
-
----
-
 ## Licencia
 
 Este proyecto se distribuye bajo la licencia MIT.
 
-Consulta el archivo LICENSE para más información.
+Consulta el archivo `LICENSE` en la raíz del proyecto para más información.
 
 ---
 
